@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>F:\My Documents\Dropbox\Workspace\BeadMaker2018\exe build resources\beadmaker.jar</jar>
+  <outfile>F:\My Documents\Dropbox\Workspace\BeadMaker2018\exe build resources\BeadMaker.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>F:\My Documents\Dropbox\Workspace\BeadMaker2018\exe build resources\BeadMakerIcon.ico</icon>
+  <classPath>
+    <mainClass>beadMaker.BeadMaker</mainClass>
+    <cp>.</cp>
+  </classPath>
+  <jre>
+    <path></path>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <minVersion>1.7</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>64</runtimeBits>
+  </jre>
+  <splash>
+    <file>F:\My Documents\Dropbox\Workspace\BeadMaker2018\exe build resources\BeadMakerSplashScreen.bmp</file>
+    <waitForWindow>true</waitForWindow>
+    <timeout>60</timeout>
+    <timeoutErr>false</timeoutErr>
+  </splash>
+</launch4jConfig>

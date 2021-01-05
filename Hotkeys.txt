@@ -1,0 +1,17 @@
+C: show all colors
+P: toggle Perler
+A: toggle Artkal
+G: show grid
+B: show pixels as beads
+O: open
+S: save
+^S: save AS
+Q: hide/show control panel
+I: select image
+E: export PNG
+D: export pdf
+^D: export pdf (COLOR)
+F: Flip Image
+^X: exit
+M: toggle expert mode
+

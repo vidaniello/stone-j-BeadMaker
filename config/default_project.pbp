@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="us-ascii" standalone="no"?><!--
+TO READ THIS XML IN HUMAN_READABLE TABLE FORMAT, DUMP THE XML INTO THIS UTILITY:
+http://codebeautify.org/xml-to-excel-converter
+--><project>	
+	<imageFile>\images\inigo_montoya.png</imageFile>
+	<palletteFile>\pallettes\_default_pallette_withSorting.xml</palletteFile>
+	<dialValues>
+		<red>0</red>
+		<green>0</green>
+		<blue>0</blue>
+		<brightness>0</brightness>
+		<contrast>0</contrast>
+		<saturation>0</saturation>
+		<sharpness>0</sharpness>
+		<ditherLevel>0</ditherLevel>
+		<zoom>600</zoom>
+		<imageScale>100</imageScale>
+	</dialValues>
+	<brandsToUse>
+		<perler>1</perler>
+		<hama>0</hama>
+		<artkalS>1</artkalS>
+	</brandsToUse>
+	<beadsToExclude>
+		<translucents>1</translucents>
+		<pearls>1</pearls>
+		<uncheckedColorIndices/>
+	</beadsToExclude>
+	<displaySettings>
+		<showColorCodes>0</showColorCodes>
+		<showPixelsAsBeads>0</showPixelsAsBeads>
+		<pegboardMode>0</pegboardMode>
+		<showGrid>1</showGrid>
+		<ditherMethod>0</ditherMethod>
+		<selectedPallette>3</selectedPallette>
+		<backgroundColor>
+			<red>1</red>
+			<green>1</green>
+			<blue>1</blue>
+		</backgroundColor>
+		<gridColor>
+			<red>1</red>
+			<green>1</green>
+			<blue>1</blue>
+		</gridColor>
+		<flipImage>0</flipImage>
+	</displaySettings>
+</project>

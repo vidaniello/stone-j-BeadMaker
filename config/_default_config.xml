@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="us-ascii" standalone="no"?><!--
+TO READ THIS XML IN HUMAN_READABLE TABLE FORMAT, DUMP THE XML INTO THIS UTILITY:
+http://codebeautify.org/xml-to-excel-converter
+--><config>	
+	<defaultPallette>\pallettes\_default_pallette_withSorting.xml</defaultPallette>
+	<beadHighlightColor><!-- NOT CURRENTLY CONSUMED-->
+		<red>44</red>
+		<green>44</green>
+		<blue>44</blue>
+	</beadHighlightColor>
+	<window><!-- NOT CURRENTLY CONSUMED-->
+		<xPosition>102</xPosition>
+		<yPosition>102</yPosition>
+		<xSize>1324</xSize>
+		<ySize>818</ySize>
+	</window>
+	<defaultImagePath>images</defaultImagePath>
+	<currentImagePath>F:\My Documents\Dropbox\Perler Bead Patterns\_Projects\NES\Rampage</currentImagePath>
+	<defaultProjectFilePath>\config\default_project.pbp</defaultProjectFilePath>
+	<currentProjectFilePath>F:\My Documents\Dropbox\Perler Bead Patterns\_Projects\Signs &amp; Logos\Bass Pro Shops</currentProjectFilePath>
+	<expertMode>0</expertMode>
+</config>
