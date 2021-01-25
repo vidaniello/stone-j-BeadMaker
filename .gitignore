@@ -26,4 +26,7 @@ $RECYCLE.BIN/
 **/.settings
 *.bak
 *.log
+
+
 **/PalletteSampler
+/exe build resources/!InstallBeadMaker.exe

@@ -60,7 +60,6 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 			
 	public static void main(String[] args) throws Exception
 	{
-		System.out.println("Hello World");
 		new BeadMaker();
 		
 	}
