@@ -11,16 +11,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.MenuComponent;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.accessibility.AccessibleContext;
-
 import processing.data.XML;
 import beadMaker.Palette.ExcludePearls;
 import beadMaker.Palette.ExcludeTranslucents;
@@ -31,13 +27,6 @@ import core.FileHelper;
 import core.InterObjectCommunicatorEventListener;
 import beadMaker.HelperClasses.PDFHelper;
 import beadMaker.HelperClasses.XMLWorker;
-
-
-
-
-
-
-//import javax.swing.JFrame;
 import java.io.IOException;
 
 public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventListener {
