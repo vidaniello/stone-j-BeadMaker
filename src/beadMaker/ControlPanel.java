@@ -136,6 +136,8 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
 	
 	public boolean expertMode = true;
 	
+	ConsoleHelper consoleHelper = new ConsoleHelper();
+	
 
 	ControlPanel(ImageController myImageController, Palette myPallette, XMLWorker myXMLHelper, InterObjectCommunicator myOComm) {
 				
@@ -151,7 +153,7 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
 		
 		ActionListener customPalletteActionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				ConsoleHelper.PrintMessage(System.getProperty("user.dir") + "\\" + customPalletteFiles[0][customPallette.getSelectedIndex()]);
+				consoleHelper.PrintMessage(System.getProperty("user.dir") + "\\" + customPalletteFiles[0][customPallette.getSelectedIndex()]);
 						
 				pallette.GetPalletteFromXml(System.getProperty("user.dir") + "\\pallettes\\" + customPalletteFiles[0][customPallette.getSelectedIndex()], xMLHelper);
 				imageController.selectedColorIndex = -1;
@@ -293,7 +295,7 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
         };
 
 		File pallettePath = new File(System.getProperty("user.dir"), "pallettes");
-		ConsoleHelper.PrintMessage(pallettePath.toString());
+		consoleHelper.PrintMessage(pallettePath.toString());
 		File[] listOfPalletteFiles = pallettePath.listFiles(fileNameFilter);
 		customPalletteFiles = new String[2][listOfPalletteFiles.length]; //index 0 = Filename, index 1 = common name
 		//customPalletteNames = new String[listOfPalletteFiles.length];
@@ -328,7 +330,7 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
         };
         
         File lutPath = new File(System.getProperty("user.dir"), "LUTs");
-		ConsoleHelper.PrintMessage(lutPath.toString());
+        consoleHelper.PrintMessage(lutPath.toString());
 		File[] listOfLUTFiles = lutPath.listFiles(lutFileNameFilter);
 		lutFiles = new String[2][listOfLUTFiles.length]; //index 0 = Filename, index 1 = common name
 
@@ -785,9 +787,9 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
 	
 	@Override
 	public void onInterObjectCommunicator_CommunicateEvent(Object o) {
-		ConsoleHelper.PrintMessage("Detected a oComm event in ControlPanel");
+		consoleHelper.PrintMessage("Detected a oComm event in ControlPanel");
 		if (o instanceof RandomizeParametersButton) {
-			ConsoleHelper.PrintMessage("o instanceof RandomizeParametersButton TRUE");
+			consoleHelper.PrintMessage("o instanceof RandomizeParametersButton TRUE");
 			randomizeParameters(((RandomizeParametersButton) o));						
 		}
 	}

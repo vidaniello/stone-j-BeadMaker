@@ -13,6 +13,8 @@ public class PaletteCheckBox extends JCheckBox {
 	int colorIndex;
 	
 	InterObjectCommunicator oComm;
+	
+	ConsoleHelper consoleHelper = new ConsoleHelper();
 
 	PaletteCheckBox(String label, boolean state, Palette myPallette, int myColorIndex, InterObjectCommunicator myOComm) {
 		super(label, state);
@@ -38,7 +40,7 @@ public class PaletteCheckBox extends JCheckBox {
 				oComm.communicate(a, "PALETTE");
 //				PaletteCheckBox palletteCheckBox = (PaletteCheckBox)a.getSource();
 //				pallette.checkUncheck(palletteCheckBox.colorIndex, palletteCheckBox.isSelected());
-				ConsoleHelper.PrintMessage("firing pallette check action");
+				consoleHelper.PrintMessage("firing pallette check action");
 			}
 		};
 

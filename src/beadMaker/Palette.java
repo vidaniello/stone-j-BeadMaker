@@ -24,6 +24,8 @@ public class Palette implements InterObjectCommunicatorEventListener {
 
 	//For InterObjectCommunicator identification
 	private String objectName = "PALETTE";
+	
+	ConsoleHelper consoleHelper = new ConsoleHelper();
 		
 	public enum ExcludeTranslucents {
 		FALSE,
@@ -177,7 +179,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 
 
 	public void CreateButtons(String caller) {
-		ConsoleHelper.PrintMessage("CreateButtons: called by " + caller);
+		consoleHelper.PrintMessage("CreateButtons: called by " + caller);
 		
 		palletteSubPanels = new ArrayList<>();
 		
@@ -233,7 +235,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 
 	public void GetPalletteFromXml(String fileName, XMLWorker xMLHelper) {
 
-		ConsoleHelper.PrintMessage("GetPalletteFromXml");
+		consoleHelper.PrintMessage("GetPalletteFromXml");
 
 		XML[] colorXml = xMLHelper.GetXMLFromFile(fileName)[0].getChildren("color");
 		
@@ -276,7 +278,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 				perlerColorsRGB[i][arrayIndex11_Brand] = brandIdArtkalS;
 				break;
 			default:
-				ConsoleHelper.PrintMessage("WE HAVE HIT THE DEFAULT CASE-- THIS SHOULD NEVER HAPPEN");
+				consoleHelper.PrintMessage("WE HAVE HIT THE DEFAULT CASE-- THIS SHOULD NEVER HAPPEN");
 				break;
 			}
 
@@ -301,7 +303,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 	// GetPalletteWithFiltersApplied
 	//---------------------------------------------------------------------------
 	public void GetPalletteWithFiltersApplied() {
-		ConsoleHelper.PrintMessage("GetPalletteWithFiltersApplied");
+		consoleHelper.PrintMessage("GetPalletteWithFiltersApplied");
 
 		int arrayLength = 0;
 		int arrayIndex = 0;
@@ -407,7 +409,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 			}
 		}
 
-		ConsoleHelper.PrintMessage("%%%%%%%%%%%%%%%%%%TOTAL PALLETTE COLORS = " + arrayLength + "%%%%%%%%%%%%%%%%%%");
+		consoleHelper.PrintMessage("%%%%%%%%%%%%%%%%%%TOTAL PALLETTE COLORS = " + arrayLength + "%%%%%%%%%%%%%%%%%%");
 		currentPallette = returnPallette;
 	}
 
@@ -484,12 +486,12 @@ public class Palette implements InterObjectCommunicatorEventListener {
 	public void onInterObjectCommunicator_CommunicateEvent(Object o) {
 		if (o instanceof String) {
 			String s = ((String) o);
-			ConsoleHelper.PrintMessage("fired an event from oCommInterface in Palette: " + s);
+			consoleHelper.PrintMessage("fired an event from oCommInterface in Palette: " + s);
 	        if (s.equals("show all colors")) {
 	        	showAllColors();
 	        }
 	        if (s.equals("create buttons")) {
-	        	ConsoleHelper.PrintMessage("CreateButtons()");
+	        	consoleHelper.PrintMessage("CreateButtons()");
 	        	CreateButtons("");
 	        }
 		}
@@ -498,7 +500,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 				ActionEvent a = ((ActionEvent) o);
 				if (a.getSource() instanceof PaletteCheckBox) {
 					PaletteCheckBox pcb = ((PaletteCheckBox) a.getSource());
-					ConsoleHelper.PrintMessage("fired an event from oCommInterface in Palette: PaletteCheckBox action event");
+					consoleHelper.PrintMessage("fired an event from oCommInterface in Palette: PaletteCheckBox action event");
 					checkUncheck(pcb.colorIndex, pcb.isSelected());
 				}
 			}
@@ -506,7 +508,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 		if (o instanceof KeyEvent) {
 			KeyEvent e = ((KeyEvent) o);
 			if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-				ConsoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in Palette" + e.getKeyCode());
+				consoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in Palette" + e.getKeyCode());
 				showAllColors();
 	        }			
 		}
@@ -546,7 +548,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 	public Object onInterObjectCommunicator_RequestEvent(String descriptor, Object o) {
 		if (descriptor.equals("set bead brand")) {
 			if (o instanceof BMCheckBox) {
-				ConsoleHelper.PrintMessage("running set bead brand for BMCheckBox");
+				consoleHelper.PrintMessage("running set bead brand for BMCheckBox");
 				BMCheckBox cb = ((BMCheckBox) o);
 				return setBeadBrand(StringHelper.removeXML(cb.getText()), !cb.isSelected());
 			}

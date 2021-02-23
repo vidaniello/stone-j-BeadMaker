@@ -26,6 +26,7 @@ import beadMaker.Palette.ExcludePearls;
 import beadMaker.Palette.ExcludeTranslucents;
 import core.ArrayHelper;
 import core.ConsoleHelper;
+import core.ConsoleHelper.MessageLevel;
 import core.FileHelper;
 import core.InterObjectCommunicatorEventListener;
 import beadMaker.HelperClasses.PDFHelper;
@@ -43,7 +44,9 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 
 	//For InterObjectCommunicator identification
 	private String objectName = "MENU_BAR";
-		
+	
+	ConsoleHelper consoleHelper = new ConsoleHelper();
+	FileHelper fileHelper = new FileHelper();
 		
 	private int customPalletteIndex = 0;
 	
@@ -128,15 +131,16 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 
 		expertMode.setState(xmlHelper.GetIntFromXml("expertMode", xmlHelper.configXML) == 1 ? true: false);
 		
+		consoleHelper.PrintMessage("$$$$$$$$$$$$$$$$HOLY SCHNIKES$$$$$$$$$$$$$$$$$$", MessageLevel.MESSAGE);
+		
 		//populate images submenu
 		File myImagePath = new File(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", configXML));
 		if (myImagePath.isDirectory()) {
-			ConsoleHelper.PrintMessage(myImagePath.toString());
+			consoleHelper.PrintMessage(myImagePath.toString());
 			PopulateImageMenu(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", configXML));			
 		} else {
-			//PopulateImageMenu(sketchPath("") + "images");
-			ConsoleHelper.PrintMessage(System.getProperty("user.dir") + "images");
-			PopulateImageMenu(System.getProperty("user.dir") + "images");
+			consoleHelper.PrintMessage(System.getProperty("user.dir") + File.separator + "images");
+			PopulateImageMenu(System.getProperty("user.dir") + File.separator + "images");
 		}
 
 		//construct the menu
@@ -247,14 +251,31 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	//---------------------------------------------------------------------------
 	void SelectImage() {
 
-		LoadImage(
-			FileHelper.GetFilenameFromFileChooser(
-				imageFileExtensions,
-				imageFileDescription,
-				xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", xmlHelper.configXML)
-			),
-			true
-		);
+		File myImagePath = new File(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", xmlHelper.configXML));
+		if (myImagePath.isDirectory()) {
+			consoleHelper.PrintMessage(myImagePath.toString());
+			LoadImage(
+				fileHelper.GetFilenameFromFileChooser(
+					imageFileExtensions,
+					imageFileDescription,
+					xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", xmlHelper.configXML)
+				),
+				true
+			);
+		} else {
+			//PopulateImageMenu(sketchPath("") + "images");
+			consoleHelper.PrintMessage(System.getProperty("user.dir") + File.separator + "images");
+			//PopulateImageMenu(System.getProperty("user.dir") + File.separator + "images");
+			String imageToLoad =
+				fileHelper.GetFilenameFromFileChooser (
+					imageFileExtensions,
+					imageFileDescription,
+					System.getProperty("user.dir") + File.separator + "images"
+				);
+			if (imageToLoad != null) {
+				LoadImage(imageToLoad, true);
+			}
+		}
 	}
 	
 	
@@ -271,7 +292,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	// LoadImage
 	//---------------------------------------------------------------------------
 	void LoadImage(String myImageFilename, boolean updateImagePath) {
-		ConsoleHelper.PrintMessage("LoadImage");
+		consoleHelper.PrintMessage("LoadImage");
 		
 		this.imageFile = myImageFilename;
 		
@@ -304,7 +325,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		MenuItem[] menuItem_images = new MenuItem[listOfFiles.length];
 
 		for (final File file : listOfFiles) {
-			String extension = FileHelper.getExtension(file.getName());
+			String extension = fileHelper.getExtension(file.getName());
 			if (file.isFile() && extension.equals("png")) {
 				menuItem_images[imageIndex] = new MenuItem(file.getName());
 				menu_image.add(menuItem_images[imageIndex]);
@@ -312,7 +333,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 				menuItem_images[imageIndex].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						imageFile = file.getAbsoluteFile().toString();
-						ConsoleHelper.PrintMessage(imageFile);
+						consoleHelper.PrintMessage(imageFile);
 						//SetFrameTitle(renderPApplet, currentProjectName);
 						LoadImage(imageFile, false);
 					}
@@ -327,7 +348,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	// OpenYouTubeVideo
 	//---------------------------------------------------------------------------
 	synchronized void OpenYouTubeVideo() {
-		ConsoleHelper.PrintMessage("OpenYouTubeVideo");
+		consoleHelper.PrintMessage("OpenYouTubeVideo");
 
 		URI uri = null;
 
@@ -357,9 +378,9 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	// GetProjectNameFromFileChooser
 	//---------------------------------------------------------------------------
 	public void GetProjectFromFileChooser() {
-		ConsoleHelper.PrintMessage("GetProjectNameFromFileChooser");
+		consoleHelper.PrintMessage("GetProjectNameFromFileChooser");
 
-		String myChosenProjectFile = FileHelper.GetFilenameFromFileChooser(
+		String myChosenProjectFile = fileHelper.GetFilenameFromFileChooser(
 			new String[] {perlerProjectFileExtension},
 			perlerProjectFileDescription,
 			xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML)
@@ -390,8 +411,8 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	//---------------------------------------------------------------------------
 	//TODO: load project info and use it to set all controls, load image, etc.
 	public void LoadProject(String myProjectFile, boolean updateCurrentProjectFilePath) {
-		ConsoleHelper.PrintMessage("LoadProject");
-		ConsoleHelper.PrintMessage("Loading Project: " + myProjectFile);
+		consoleHelper.PrintMessage("LoadProject");
+		consoleHelper.PrintMessage("Loading Project: " + myProjectFile);
 
 		xmlHelper.projectXML = xmlHelper.GetXMLFromFile(myProjectFile);
 
@@ -409,9 +430,18 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		controlPanel.sliderScale		.setValue			(xmlHelper.GetIntFromXml("dialValues.imageScale"			, xmlHelper.projectXML));
 		controlPanel.sliderZoom			.setValue			(xmlHelper.GetIntFromXml("dialValues.zoom"					, xmlHelper.projectXML));
 		controlPanel.ditherMethod		.setSelectedIndex	(xmlHelper.GetIntFromXml("displaySettings.ditherMethod"		, xmlHelper.projectXML));
-		controlPanel.customPallette		.setSelectedIndex	(xmlHelper.GetIntFromXml("displaySettings.selectedPallette"	, xmlHelper.projectXML));
+		//controlPanel.customPallette		.setSelectedIndex	(xmlHelper.GetIntFromXml("displaySettings.selectedPallette"	, xmlHelper.projectXML));
 		controlPanel.pegboardSize		.setSelectedIndex	(xmlHelper.GetIntFromXml("displaySettings.pegboardMode"		, xmlHelper.projectXML));
 
+		String selectedPalette = xmlHelper.GetDataFromXml("displaySettings.selectedPallette"	, xmlHelper.projectXML);
+		
+		//if the pbp stored palette filename matches the palette filename, set it as the selected palette in the UI
+		for (int i = 0; i < controlPanel.customPalletteFiles.length; i++) {
+			if (selectedPalette.equals(controlPanel.customPalletteFiles[0][i])) {
+				controlPanel.customPallette.setSelectedIndex(i);
+			}
+		}		
+		
 		//This is for backward compatibility for projects that did not have "displaySettings.flipImage"
 		//If we add more new project settings,
 		//this try catch might not be smart enough to know which XML field is missing,
@@ -426,8 +456,8 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		boolean perlerCheckBoxState = xmlHelper.GetIntFromXml("brandsToUse.perler"	, xmlHelper.projectXML) == 1 ? true: false;
 		boolean artkalCheckBoxState = xmlHelper.GetIntFromXml("brandsToUse.artkalS"	, xmlHelper.projectXML) == 1 ? true: false;
 
-		ConsoleHelper.PrintMessage("brandsToUse.perler = " + xmlHelper.GetIntFromXml("brandsToUse.perler"	, xmlHelper.projectXML));
-		ConsoleHelper.PrintMessage("brandsToUse.artkalS = " + xmlHelper.GetIntFromXml("brandsToUse.artkalS"	, xmlHelper.projectXML));
+		consoleHelper.PrintMessage("brandsToUse.perler = " + xmlHelper.GetIntFromXml("brandsToUse.perler"	, xmlHelper.projectXML));
+		consoleHelper.PrintMessage("brandsToUse.artkalS = " + xmlHelper.GetIntFromXml("brandsToUse.artkalS"	, xmlHelper.projectXML));
 
 		//if both brands are unchecked (which is an invalid state, but *could* happen, check Perler by default
 		if(!artkalCheckBoxState) {
@@ -441,8 +471,8 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 			this.controlPanel.artkalCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Artkal-S"	, true));
 		}
 
-		ConsoleHelper.PrintMessage("controlPanel.perlerCheckboxPanel.checkbox = " + controlPanel.perlerCheckboxPanel.checkbox.isSelected());
-		ConsoleHelper.PrintMessage("controlPanel.artkalCheckboxPanel.checkbox = " + controlPanel.artkalCheckboxPanel.checkbox.isSelected());
+		consoleHelper.PrintMessage("controlPanel.perlerCheckboxPanel.checkbox = " + controlPanel.perlerCheckboxPanel.checkbox.isSelected());
+		consoleHelper.PrintMessage("controlPanel.artkalCheckboxPanel.checkbox = " + controlPanel.artkalCheckboxPanel.checkbox.isSelected());
 
 		this.controlPanel.showGridCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("displaySettings.showGrid"	, xmlHelper.projectXML) == 1 ? true: false);
 		imageController.renderLabel.showGrid = xmlHelper.GetIntFromXml("displaySettings.showGrid", xmlHelper.projectXML) == 1 ? true: false;
@@ -486,7 +516,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		for (int i = 0; i < imageController.pallette.perlerColorsRGB.length; i++) {
 			for (int j = 0; j < imageController.pallette.uncheckedColorIndices.length; j++) {
 				if (imageController.pallette.uncheckedColorIndices[j] == imageController.pallette.perlerColorsRGB[i][imageController.pallette.arrayIndex04_ColorIndex]) {
-					ConsoleHelper.PrintMessage("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ UNCHECKED MATCH $$$$$$$$$$$$");
+					consoleHelper.PrintMessage("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ UNCHECKED MATCH $$$$$$$$$$$$");
 					imageController.pallette.perlerColorsRGB[i][imageController.pallette.arrayIndex16_IsChecked] = 0;
 				}
 			}
@@ -525,7 +555,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	}
 
 	public void SaveProject(String myProjectName) {
-		ConsoleHelper.PrintMessage("SaveProject");
+		consoleHelper.PrintMessage("SaveProject");
 		
 		//if the current project is the default project, do not oeverwirte the file
 		if (myProjectName.equals(defaultProjectFilePath) || myProjectName.equals("Untitled")) {
@@ -547,10 +577,10 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 
 					myProjectName = chooser.getSelectedFile().toString();
 
-					if (!FileHelper.getExtension(myProjectName).equals(perlerProjectFileExtension)) {
+					if (!fileHelper.getExtension(myProjectName).equals(perlerProjectFileExtension)) {
 						myProjectName += "." + perlerProjectFileExtension;
 					}
-					ConsoleHelper.PrintMessage("myProjectName = " + myProjectName);
+					consoleHelper.PrintMessage("myProjectName = " + myProjectName);
 					File selectedFile = new File(myProjectName);
 					if (selectedFile.exists()) {
 						int dialogButton = JOptionPane.YES_NO_OPTION;
@@ -563,15 +593,15 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 						FileHelper.CopyFileUsingStream(new File(defaultProjectFilePath), selectedFile);
 					}
 
-					ConsoleHelper.PrintMessage("myProjectName EXTENSION = ***" + FileHelper.getExtension(myProjectName) + "***");
+					consoleHelper.PrintMessage("myProjectName EXTENSION = ***" + fileHelper.getExtension(myProjectName) + "***");
 
-					if (!FileHelper.getExtension(myProjectName).equals(perlerProjectFileExtension)) {
+					if (!fileHelper.getExtension(myProjectName).equals(perlerProjectFileExtension)) {
 						myProjectName += "." + perlerProjectFileExtension;
-						ConsoleHelper.PrintMessage("After extension check, myProjectName = " + myProjectName);
+						consoleHelper.PrintMessage("After extension check, myProjectName = " + myProjectName);
 					}
 
 					currentProjectName = myProjectName;
-					ConsoleHelper.PrintMessage("You chose to save this file: " + myProjectName);
+					consoleHelper.PrintMessage("You chose to save this file: " + myProjectName);
 					
 				} else {
 					return; //bail out because the user did not select a file
@@ -617,7 +647,8 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		xmlData[15] = new String[] {"beadsToExclude.pearls"					,Integer.toString(controlPanel.excludePearlsCheckboxPanel		.checkbox.isSelected() ? 1 : 0)};
 		xmlData[16] = new String[] {"beadsToExclude.uncheckedColorIndices"	,myUncheckedIndices};
 
-		xmlData[17] = new String[] {"displaySettings.selectedPallette"		,Integer.toString(controlPanel.customPallette.getSelectedIndex())};
+		//xmlData[17] = new String[] {"displaySettings.selectedPallette"	,Integer.toString(controlPanel.customPallette.getSelectedIndex())};
+		xmlData[17] = new String[] {"displaySettings.selectedPallette"		,controlPanel.customPalletteFiles[0][controlPanel.customPallette.getSelectedIndex()]};
 		xmlData[18] = new String[] {"displaySettings.showColorCodes"		,Integer.toString(0)};
 
 		xmlData[19] = new String[] {"displaySettings.showPixelsAsBeads"		,Integer.toString(controlPanel.renderPixelsAsBeadsCheckboxPanel	.checkbox.isSelected() ? 1 : 0)};
@@ -652,7 +683,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 				OpenProject();				
 	        }
 			if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() ^ KeyEvent.CTRL_MASK) == 0)) {
-				ConsoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in MenuBar" + e.getKeyCode());
+				consoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in MenuBar" + e.getKeyCode());
 				expertMode.setState(!expertMode.getState());
 				SetExpertMode();				
 	        }

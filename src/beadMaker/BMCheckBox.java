@@ -14,7 +14,9 @@ public class BMCheckBox extends JCheckBox implements InterObjectCommunicatorEven
 	//For InterObjectCommunicator identification
 	private String objectName = "";
 	
-	private InterObjectCommunicator oComm;		
+	private InterObjectCommunicator oComm;	
+	
+	ConsoleHelper consoleHelper = new ConsoleHelper();
 	
 	BMCheckBox(String myLabel, boolean checkedState, InterObjectCommunicator myOComm) {
 		super(myLabel, checkedState);
@@ -32,7 +34,7 @@ public class BMCheckBox extends JCheckBox implements InterObjectCommunicatorEven
 		if (!objectName.equals("")) {
 			oComm = myOComm;
 			oComm.setInterObjectCommunicatorEventListener(this);
-			ConsoleHelper.PrintMessage("Registering oComm with Checkbox " + myLabel);
+			consoleHelper.PrintMessage("Registering oComm with Checkbox " + myLabel);
 		}
 	}
 	

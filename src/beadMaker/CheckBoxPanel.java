@@ -17,6 +17,8 @@ public class CheckBoxPanel extends JPanel {
 	public BMCheckBox checkbox;
 	public ImageController imageController;
 	InterObjectCommunicator oComm;
+	
+	ConsoleHelper consoleHelper = new ConsoleHelper();
 
 	CheckBoxPanel(String myLabel, boolean checkedState, Palette pallette, ImageController imageController, InterObjectCommunicator myOComm) {
 		super();
@@ -47,7 +49,7 @@ public class CheckBoxPanel extends JPanel {
 		
 		String myLabelNoXML = StringHelper.removeXML(myLabel);
 		
-		ConsoleHelper.PrintMessage(" %%%%%%%%%%%%%%%%%%%%%%%%myLabelNoXML =" + myLabelNoXML);
+		consoleHelper.PrintMessage(" %%%%%%%%%%%%%%%%%%%%%%%%myLabelNoXML =" + myLabelNoXML);
 
 		if (myLabelNoXML.equals("Perler") || myLabelNoXML.equals("Artkal-S") || myLabelNoXML.equals("Hama")) { 
 
@@ -57,7 +59,7 @@ public class CheckBoxPanel extends JPanel {
 					checkBox.setSelected(pallette.setBeadBrand(StringHelper.removeXML(checkBox.getText()), checkBox.isSelected()));
 					oComm.communicate("update images", "IMAGE_CONTROLLER");
 					oComm.communicate("create buttons", "PALETTE");
-					ConsoleHelper.PrintMessage("FIRING beadBrandActionListener");
+					consoleHelper.PrintMessage("FIRING beadBrandActionListener");
 				}
 			};
 
@@ -122,11 +124,11 @@ public class CheckBoxPanel extends JPanel {
 		
 		
 		if (myLabelNoXML.equals("Flip Image")) { 
-			ConsoleHelper.PrintMessage(" %%%%%%%%%%%%%%%%%%%%%%%%Adding ActionListener for Flip Image");
+			consoleHelper.PrintMessage(" %%%%%%%%%%%%%%%%%%%%%%%%Adding ActionListener for Flip Image");
 			ActionListener flipImageActionListener = new ActionListener() {
 				public void actionPerformed(ActionEvent actionEvent) {
 					BMCheckBox checkBox = (BMCheckBox)actionEvent.getSource();
-					ConsoleHelper.PrintMessage(" %%%%%%%%%%%%%%%%%%%%%%%%Flip Image click event detected");
+					consoleHelper.PrintMessage(" %%%%%%%%%%%%%%%%%%%%%%%%Flip Image click event detected");
 					imageController.flipImage(checkBox.isSelected());
 				}
 			};

@@ -32,7 +32,7 @@ http://codebeautify.org/xml-to-excel-converter
 		<pegboardMode>0</pegboardMode>
 		<showGrid>1</showGrid>
 		<ditherMethod>0</ditherMethod>
-		<selectedPallette>2</selectedPallette>
+		<selectedPallette>_default_pallette_withSorting.xml</selectedPallette>
 		<backgroundColor>
 			<red>1</red>
 			<green>1</green>

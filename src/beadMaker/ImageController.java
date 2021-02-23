@@ -118,6 +118,9 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 	public boolean splitSuperPegboard = true;
 
 	//public boolean showPixelsAsBeads = false;
+	
+	ConsoleHelper consoleHelper = new ConsoleHelper();
+	ImageHelper imageHelper = new ImageHelper();
 
 	public int zoomFactor = 500; //this gets overridden by the config file immediately
 
@@ -171,7 +174,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 		renderScrollPanel = new BMScrollPane(beadMaker, renderLabel);
 		
 		String imagePath = beadMaker.xmlWorker.GetAbsoluteFilePathStringFromXml("imageFile", beadMaker.xmlWorker.projectXML);
-		ConsoleHelper.PrintMessage("imagePath from project XML = " + imagePath);
+		consoleHelper.PrintMessage("imagePath from project XML = " + imagePath);
 
 		if (GlobalConstants.applyLUT == 1) {
 			loadLUT(System.getProperty("user.dir") + "\\LUTs\\" + "default.png");
@@ -191,23 +194,23 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 	public void setOriginalCleanedImage(String imagePath) {
 		//originalCleanedImage = (BMImage)ProcessingHelper.loadImage(imagePath);
 		//originalCleanedImage = new BMImage((Image)ProcessingHelper.loadImage(imagePath).getNative());
-		originalCleanedImage = new BMImage(ImageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath));
+		originalCleanedImage = new BMImage(imageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath));
 		updateImages();
 	}
 	
 	
 	public void loadLUT(String imagePath) {
-		lutImage = new BMImage(ImageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath));
+		lutImage = new BMImage(imageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath));
 	}
 	
 	public void loadColorMap(String imagePath) {
-		ConsoleHelper.PrintMessage("loadColorMap");
+		consoleHelper.PrintMessage("loadColorMap");
 		
 		BMImage colorMappedSprite;
 		
-		colorMap = new BMImage(ImageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath));
+		colorMap = new BMImage(imageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath));
 		
-		ConsoleHelper.PrintMessage("colorMap.width = " + colorMap.width);
+		consoleHelper.PrintMessage("colorMap.width = " + colorMap.width);
 
 		colorMappedImage = new BMImage(
 			originalCleanedImage.width * colorMap.width,
@@ -216,10 +219,10 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 		
 		//colorMappedImage = originalCleanedImage.get();
 		
-		ConsoleHelper.PrintMessage("originalCleanedImage.width = " + originalCleanedImage.width);
-		ConsoleHelper.PrintMessage("originalCleanedImage.height = " + originalCleanedImage.height);
+		consoleHelper.PrintMessage("originalCleanedImage.width = " + originalCleanedImage.width);
+		consoleHelper.PrintMessage("originalCleanedImage.height = " + originalCleanedImage.height);
 		
-		ConsoleHelper.PrintMessage("colorMappedImage.width = " + colorMappedImage.width);
+		consoleHelper.PrintMessage("colorMappedImage.width = " + colorMappedImage.width);
 		
 		for(int i = 0; i < colorMap.width; i++) {
 			colorMappedSprite = originalCleanedImage.get();
@@ -232,13 +235,13 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 					}
 				}
 			}
-			colorMappedImage = (BMImage)ImageHelper.ReplacePortionOfImage(colorMappedImage, colorMappedSprite, i * colorMappedSprite.width, 0);
+			colorMappedImage = (BMImage)imageHelper.ReplacePortionOfImage(colorMappedImage, colorMappedSprite, i * colorMappedSprite.width, 0);
 		}
 		//colorMappedImage = (BMImage)ImageHelper.ReplacePortionOfImage(colorMappedImage, originalCleanedImage, 0, 0);
 		
 		originalCleanedImage = colorMappedImage.get();
 		
-		ConsoleHelper.PrintMessage("originalCleanedImage.width = " + originalCleanedImage.width);
+		consoleHelper.PrintMessage("originalCleanedImage.width = " + originalCleanedImage.width);
 		
 		updateImages();
 	}
@@ -313,12 +316,12 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 	//updateImages
 	//---------------------------------------------------------------------------
 	public void updateImages() {
-		ConsoleHelper.PrintMessage("updateImages");
+		consoleHelper.PrintMessage("updateImages");
 		
 		//previewImage = originalCleanedImage.get();
 		colorCorrectedBeadMappedImage = originalCleanedImage.get();
 		
-		ConsoleHelper.PrintMessage("colorCorrectedBeadMappedImage.width = " + colorCorrectedBeadMappedImage.width);
+		consoleHelper.PrintMessage("colorCorrectedBeadMappedImage.width = " + colorCorrectedBeadMappedImage.width);
 		
 		if (flipImage) {
 			colorCorrectedBeadMappedImage.FlipHorizontally();
@@ -348,7 +351,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 			//renderLabel needs a copy of the image for its PaintComponent method (when renderPixelsAsBeads is turned on)
 			renderLabel.renderImage = colorCorrectedBeadMappedImage.get();
 		} else {
-			colorCorrectedBeadMappedImage_SingleColor = BMImage.HighlightSelectedColor(colorCorrectedBeadMappedImage, pallette, selectedColorIndex);
+			colorCorrectedBeadMappedImage_SingleColor = colorCorrectedBeadMappedImage.HighlightSelectedColor(colorCorrectedBeadMappedImage, pallette, selectedColorIndex);
 			perlerSwappedIcon =  new ImageIcon((BufferedImage)colorCorrectedBeadMappedImage_SingleColor.getNative());
 			//renderLabel needs a copy of the image for its PaintComponent method (when renderPixelsAsBeads is turned on)
 			renderLabel.renderImage = colorCorrectedBeadMappedImage_SingleColor.get();
@@ -369,7 +372,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 	//GetImageScale
 	//---------------------------------------------------------------------------
 	public int GetImageScale(BMImage myBMImage, JPanel jPanel) {
-		ConsoleHelper.PrintMessage("GetImageScale");
+		consoleHelper.PrintMessage("GetImageScale");
 
 		int imageScaleX = 0, imageScaleY = 0;
 		int windowWidth, windowHeight;
@@ -380,13 +383,13 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 		//Insets innerInsets = compoundBorder.getInsideBorder().getBorderInsets(jPanel);
 		int borderThickness = outerInsets.top;
 
-		ConsoleHelper.PrintMessage("borderThickness = " + Integer.toString(borderThickness));
+		consoleHelper.PrintMessage("borderThickness = " + Integer.toString(borderThickness));
 
 		windowWidth = r.width - borderThickness * 2;
 		windowHeight = r.height - borderThickness * 2;
 
-		ConsoleHelper.PrintMessage("window height = " + Integer.toString(r.height));
-		ConsoleHelper.PrintMessage("window width = " + Integer.toString(r.width));
+		consoleHelper.PrintMessage("window height = " + Integer.toString(r.height));
+		consoleHelper.PrintMessage("window width = " + Integer.toString(r.width));
 
 		imageScaleX = (int) Math.floor(windowWidth * 1.0f / myBMImage.width);
 		imageScaleY = (int) Math.floor(windowHeight * 1.0f / myBMImage.height);
@@ -450,7 +453,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 	// resizeImageforPDFOutput
 	//---------------------------------------------------------------------------
 	synchronized public BMImage[] resizeImageforPDFOutput(BMImage image, ImageController.PegboardMode myPegboardMode, boolean mySplitSuperPegboard) {
-		ConsoleHelper.PrintMessage("resizeImageforPDFOutput");
+		consoleHelper.PrintMessage("resizeImageforPDFOutput");
 
 		BMImage[] localImage = new BMImage[2];
 		BMImage[] outputImage = new BMImage[2];
@@ -478,7 +481,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 			case CUSTOM_41x49:
 			case LEGO_8x8:
 				//localImage[0] = resizeImage(localImage[0], localImage[0].upscalerForPDFPrinting);
-				pixelsContainer = ImageHelper.resizeImage(localImage[0], BMImage.upscalerForPDFPrinting);
+				pixelsContainer = imageHelper.resizeImage(localImage[0], BMImage.upscalerForPDFPrinting);
 				localImage[0].setPixels(pixelsContainer.pixels, pixelsContainer.width, pixelsContainer.height);
 				localImage[0].resize(0, (int)Math.ceil(localImage[0].height * BMImage.scaleForPDFPrinting_Perler / (float)BMImage.upscalerForPDFPrinting));
 				outputImage[0] = localImage[0];
@@ -488,13 +491,13 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 			case PERLER_SUPERPEGBOARD_PORTRAIT:
 				//get the top half of the image
 				//localImage[0] = resizeImage(localImage[0], localImage[0].upscalerForPDFPrinting);
-				pixelsContainer = ImageHelper.resizeImage(localImage[0], BMImage.upscalerForPDFPrinting);
+				pixelsContainer = imageHelper.resizeImage(localImage[0], BMImage.upscalerForPDFPrinting);
 				localImage[0].setPixels(pixelsContainer.pixels, pixelsContainer.width, pixelsContainer.height);
 				outputImage[0] = localImage[0].get(0, 0, localImage[0].width, (int)Math.floor(localImage[0].height / 2.0f));
 				outputImage[0].resize((int)Math.ceil((float)localImage[0].width * BMImage.scaleForPDFPrinting_Perler / BMImage.upscalerForPDFPrinting), 0);
 				//get the bottom half of the image
 				//localImage[0] = resizeImage(localImage[0], localImage[0].upscalerForPDFPrinting);
-				pixelsContainer = ImageHelper.resizeImage(localImage[1], BMImage.upscalerForPDFPrinting);
+				pixelsContainer = imageHelper.resizeImage(localImage[1], BMImage.upscalerForPDFPrinting);
 				localImage[1].setPixels(pixelsContainer.pixels, pixelsContainer.width, pixelsContainer.height);
 				outputImage[1] = localImage[1].get(0, (int)Math.floor(localImage[1].height / 2.0f), localImage[1].width, (int)Math.ceil(localImage[1].height / 2.0f));
 				outputImage[1].resize((int)Math.ceil((float)localImage[1].width * BMImage.scaleForPDFPrinting_Perler / BMImage.upscalerForPDFPrinting), 0);
@@ -503,13 +506,13 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 			case PERLER_SUPERPEGBOARD_LANDSCAPE:
 				//get the left half of the image
 				//localImage[0] = resizeImage(localImage[0], localImage[0].upscalerForPDFPrinting);
-				pixelsContainer = ImageHelper.resizeImage(localImage[0], BMImage.upscalerForPDFPrinting);
+				pixelsContainer = imageHelper.resizeImage(localImage[0], BMImage.upscalerForPDFPrinting);
 				localImage[0].setPixels(pixelsContainer.pixels, pixelsContainer.width, pixelsContainer.height);
 				outputImage[0] = localImage[0].get(0, 0, (int)Math.floor(localImage[0].width / 2.0f), localImage[0].height);
 				outputImage[0].resize(0, (int)Math.ceil((float)localImage[0].height * BMImage.scaleForPDFPrinting_Perler / BMImage.upscalerForPDFPrinting));
 				//get the right half of the image
 				//localImage[1] = resizeImage(localImage[1], localImage[0].upscalerForPDFPrinting);
-				pixelsContainer = ImageHelper.resizeImage(localImage[1], BMImage.upscalerForPDFPrinting);
+				pixelsContainer = imageHelper.resizeImage(localImage[1], BMImage.upscalerForPDFPrinting);
 				localImage[1].setPixels(pixelsContainer.pixels, pixelsContainer.width, pixelsContainer.height);
 				outputImage[1] = localImage[1].get((int)Math.floor(localImage[1].width / 2.0f), 0, (int)Math.floor(localImage[1].width / 2.0f), localImage[1].height);
 				outputImage[1].resize(0, (int)Math.ceil((float)localImage[1].height * BMImage.scaleForPDFPrinting_Perler / BMImage.upscalerForPDFPrinting));
@@ -518,7 +521,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 			case PERLERMINI:
 			case PERLERMINI_FORPDFPRINTING:
 				//localImage[0] = resizeImage(localImage[0], localImage[0].upscalerForPDFPrinting);
-				pixelsContainer = ImageHelper.resizeImage(localImage[0], BMImage.upscalerForPDFPrinting);
+				pixelsContainer = imageHelper.resizeImage(localImage[0], BMImage.upscalerForPDFPrinting);
 				localImage[0].setPixels(pixelsContainer.pixels, pixelsContainer.width, pixelsContainer.height);
 				localImage[0].resize(0, (int)Math.ceil((float)localImage[0].height * BMImage.scaleForPDFPrinting_PerlerMini / BMImage.upscalerForPDFPrinting));
 				outputImage[0] = localImage[0];
@@ -568,7 +571,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 			break;
 		case "Contrast":
 			this.colorMatchingWeight_Contrast = (float)((Math.pow(4.0, Math.pow(4.0, (value + 50f) / 100f)) - 1.0f) / 15f);
-			ConsoleHelper.PrintMessage("colorMatchingWeight_Contrast = " + colorMatchingWeight_Contrast);
+			consoleHelper.PrintMessage("colorMatchingWeight_Contrast = " + colorMatchingWeight_Contrast);
 			break;
 		case "Saturation":
 			this.colorMatchingWeight_Saturation = value / 50.0f;
@@ -578,7 +581,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 			break;
 		case "Sharpness":
 			this.colorMatchingWeight_Sharpness = value / 100.0f;
-			ConsoleHelper.PrintMessage("colorMatchingWeight_Sharpness = " + Float.toString(colorMatchingWeight_Sharpness));
+			consoleHelper.PrintMessage("colorMatchingWeight_Sharpness = " + Float.toString(colorMatchingWeight_Sharpness));
 			break;
 		case "Scale %":
 			this.colorMatchingWeight_ImageScale = value / 100.0f;
@@ -589,7 +592,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 		case "Zoom %":
 			this.zoomFactor = value;
 			renderLabel.pegboardSeparatorThickness = MathHelper.ensureRange(value / 300, 2, 10);
-			ConsoleHelper.PrintMessage("zoomFactor = " + zoomFactor);
+			consoleHelper.PrintMessage("zoomFactor = " + zoomFactor);
 			break;
 		}			
 
@@ -605,7 +608,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 	        	showAllColors();
 	        }
 	        if (s.equals("update images")) {
-	        	ConsoleHelper.PrintMessage("updateImages()");
+	        	consoleHelper.PrintMessage("updateImages()");
 	        	updateImages();
 	        }
 	        if (s.equals("save PNG")) {
@@ -623,7 +626,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 		if (o instanceof KeyEvent) {
 			KeyEvent e = ((KeyEvent) o);
 			if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-				ConsoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in ImageController" + e.getKeyCode());
+				consoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in ImageController" + e.getKeyCode());
 				showAllColors();
 	        }			
 		}

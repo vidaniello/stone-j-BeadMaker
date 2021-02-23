@@ -12,6 +12,8 @@ public class BMScrollPane extends JScrollPane implements MouseWheelListener {
 	
 	public BeadMaker beadMaker;
 	
+	ConsoleHelper consoleHelper = new ConsoleHelper();
+	
 	BMScrollPane(BeadMaker myBeadMaker) {
 		super();
 		beadMaker = myBeadMaker;
@@ -30,10 +32,10 @@ public class BMScrollPane extends JScrollPane implements MouseWheelListener {
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		ConsoleHelper.PrintMessage("fired a mouseWheelMoved event in BMScrollPane");
+		consoleHelper.PrintMessage("fired a mouseWheelMoved event in BMScrollPane");
 		if(e.isControlDown()) {
 			setWheelScrollingEnabled(false);
-			ConsoleHelper.PrintMessage("fired a CTRL + mouseScrolled event: " + e.getWheelRotation());
+			consoleHelper.PrintMessage("fired a CTRL + mouseScrolled event: " + e.getWheelRotation());
 			
 			if (e.getWheelRotation() == -1) { //wheel up
 				beadMaker.controlPanel.sliderZoom.setValue(beadMaker.controlPanel.sliderZoom.getValue() + 50);

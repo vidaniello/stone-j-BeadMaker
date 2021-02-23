@@ -18,6 +18,9 @@ import core.MathHelper;
 import core.ProcessingHelper;
 
 public class BMImage extends PImage {
+	
+	ConsoleHelper consoleHelper = new ConsoleHelper();
+	FileHelper fileHelper = new FileHelper();
 
 	static final int upscalerForPDFPrinting = 30;
 
@@ -197,7 +200,7 @@ public class BMImage extends PImage {
 	// SavePNG
 	//---------------------------------------------------------------------------
 	void SavePNG() {
-		ConsoleHelper.PrintMessage("SavePNG");
+		consoleHelper.PrintMessage("SavePNG");
 
 		//Show the save file dialog to the user
 		JFileChooser chooser = new JFileChooser();
@@ -210,7 +213,7 @@ public class BMImage extends PImage {
 
 			SavePNG__myPNGFile = chooser.getSelectedFile().toString();
 
-			if (!FileHelper.getExtension(SavePNG__myPNGFile).equals("png")) {
+			if (!fileHelper.getExtension(SavePNG__myPNGFile).equals("png")) {
 				SavePNG__myPNGFile += ".png";
 			}
 
@@ -223,15 +226,15 @@ public class BMImage extends PImage {
 				}
 			}
 
-			ConsoleHelper.PrintMessage("PNG Filename = " + SavePNG__myPNGFile);
+			consoleHelper.PrintMessage("PNG Filename = " + SavePNG__myPNGFile);
 
-			ConsoleHelper.PrintMessage("setting activeDrawThread = ActiveDrawThread.IMAGEPROCESSING");
+			consoleHelper.PrintMessage("setting activeDrawThread = ActiveDrawThread.IMAGEPROCESSING");
 			
 			this.save(SavePNG__myPNGFile);
 
 		}
 		else {
-			ConsoleHelper.PrintMessage("PNG file creation process failed");
+			consoleHelper.PrintMessage("PNG file creation process failed");
 			return; //bail out because the user did not select a file
 		}
 	}
@@ -243,7 +246,7 @@ public class BMImage extends PImage {
 	// SaveSCAD
 	//---------------------------------------------------------------------------
 	void SaveSCAD() {
-		ConsoleHelper.PrintMessage("SaveSCAD");
+		consoleHelper.PrintMessage("SaveSCAD");
 
 		//Show the save file dialog to the user
 		JFileChooser chooser = new JFileChooser();
@@ -256,7 +259,7 @@ public class BMImage extends PImage {
 
 			SaveSCAD__mySCADFile = chooser.getSelectedFile().toString();
 
-			if (!FileHelper.getExtension(SaveSCAD__mySCADFile).equals("scad")) {
+			if (!fileHelper.getExtension(SaveSCAD__mySCADFile).equals("scad")) {
 				SaveSCAD__mySCADFile += ".scad";
 			}
 
@@ -269,9 +272,9 @@ public class BMImage extends PImage {
 				}
 			}
 
-			ConsoleHelper.PrintMessage("SCAD Filename = " + SavePNG__myPNGFile);
+			consoleHelper.PrintMessage("SCAD Filename = " + SavePNG__myPNGFile);
 
-			ConsoleHelper.PrintMessage("setting activeDrawThread = ActiveDrawThread.IMAGEPROCESSING");
+			consoleHelper.PrintMessage("setting activeDrawThread = ActiveDrawThread.IMAGEPROCESSING");
 			
 			//Do the business
 			
@@ -340,7 +343,7 @@ public class BMImage extends PImage {
 
 		}
 		else {
-			ConsoleHelper.PrintMessage("SCAD file creation process failed");
+			consoleHelper.PrintMessage("SCAD file creation process failed");
 			return; //bail out because the user did not select a file
 		}
 	}
@@ -406,7 +409,7 @@ public class BMImage extends PImage {
 	//---------------------------------------------------------------------------
 	//synchronized public PImage SwapToPerlerColors(PImage image, int[][] pallette) {
 	public void SwapToPerlerColors(Palette pallette, float colorMatchingWeight_DitherLevel, float colorMatchingWeight_R, float colorMatchingWeight_G, float colorMatchingWeight_B, float colorMatchingWeight_Saturation, float colorMatchingWeight_Contrast, float colorMatchingWeight_Brightness, float colorMatchingWeight_Sharpness, BMImage lutImage) {
-		ConsoleHelper.PrintMessage("SwapToPerlerColors");
+		consoleHelper.PrintMessage("SwapToPerlerColors");
 
 		this.Sharpen(colorMatchingWeight_Sharpness);
 		this.ColorCorrect(colorMatchingWeight_R, colorMatchingWeight_G, colorMatchingWeight_B, colorMatchingWeight_Saturation, colorMatchingWeight_Contrast, colorMatchingWeight_Brightness, lutImage);
@@ -558,8 +561,8 @@ public class BMImage extends PImage {
 	//---------------------------------------------------------------------------
 	// HighlightSelectedColor
 	//---------------------------------------------------------------------------
-	public synchronized static BMImage HighlightSelectedColor(BMImage bmImage, Palette pallette, int myPalletteIndex) {
-		ConsoleHelper.PrintMessage("HighlightSelectedColor, looking for index " + myPalletteIndex);
+	public synchronized BMImage HighlightSelectedColor(BMImage bmImage, Palette pallette, int myPalletteIndex) {
+		consoleHelper.PrintMessage("HighlightSelectedColor, looking for index " + myPalletteIndex);
 		
 		BMImage image = bmImage.get();
 		int colorIndex = 0;
@@ -567,7 +570,7 @@ public class BMImage extends PImage {
 		for (int i = 0; i < pallette.currentPallette.length; i++) {
 			if (pallette.currentPallette[i][pallette.arrayIndex04_ColorIndex] == myPalletteIndex) {
 				colorIndex = i;
-				ConsoleHelper.PrintMessage("HighlightSelectedColor - color chosen: " + pallette.perlerColorsNames[pallette.currentPallette[i][pallette.arrayIndex04_ColorIndex]][1] + " " + pallette.perlerColorsNames[pallette.currentPallette[i][pallette.arrayIndex04_ColorIndex]][0]);
+				consoleHelper.PrintMessage("HighlightSelectedColor - color chosen: " + pallette.perlerColorsNames[pallette.currentPallette[i][pallette.arrayIndex04_ColorIndex]][1] + " " + pallette.perlerColorsNames[pallette.currentPallette[i][pallette.arrayIndex04_ColorIndex]][0]);
 			}
 		}
 
@@ -679,7 +682,7 @@ public class BMImage extends PImage {
 	// Sharpen
 	// --------------------------------------------------------------------------
 	public void Sharpen(float colorMatchingWeight_Sharpness) {
-		ConsoleHelper.PrintMessage("Sharpen");
+		consoleHelper.PrintMessage("Sharpen");
 		
 		boolean allNeighborPixelsAreOpaque;
 
@@ -794,9 +797,9 @@ public class BMImage extends PImage {
 	// the SwapToPerlerColors function is called on the image
 	//---------------------------------------------------------------------------
 	public void ColorCorrect(float colorMatchingWeight_R, float colorMatchingWeight_G, float colorMatchingWeight_B, float colorMatchingWeight_Saturation, float colorMatchingWeight_Contrast, float colorMatchingWeight_Brightness, BMImage lutImage) {
-		ConsoleHelper.PrintMessage("ColorCorrect");
+		consoleHelper.PrintMessage("ColorCorrect");
 		
-		ConsoleHelper.PrintMessage("colorMatchingWeight_R = " + colorMatchingWeight_R);
+		consoleHelper.PrintMessage("colorMatchingWeight_R = " + colorMatchingWeight_R);
 
 		//color myPixel;
 		Color myPixel;
@@ -897,7 +900,7 @@ public class BMImage extends PImage {
 	// --------------------------------------------------------------------------
 	public void FlipHorizontally() {
 
-		ConsoleHelper.PrintMessage("FlipHorizontally");
+		consoleHelper.PrintMessage("FlipHorizontally");
 		
 		BMImage sourceImage = this.get();			
 		
@@ -941,7 +944,7 @@ public class BMImage extends PImage {
 	 */
 	public BMImage ReplacePureBlack(BMImage image) {
 
-		ConsoleHelper.PrintMessage("ReplacePureBlack");
+		consoleHelper.PrintMessage("ReplacePureBlack");
 		int myRed, myGreen, myBlue, myAlpha;
 
 		image.loadPixels();
@@ -974,7 +977,7 @@ public class BMImage extends PImage {
 	// MapColors
 	//---------------------------------------------------------------------------
 	public void MapColors() {
-		ConsoleHelper.PrintMessage("MapColors");
+		consoleHelper.PrintMessage("MapColors");
 
 //		int
 //		pixelR,

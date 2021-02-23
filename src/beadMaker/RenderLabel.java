@@ -31,6 +31,8 @@ public class RenderLabel extends JLabel implements MouseMotionListener, MouseLis
 
 	//For InterObjectCommunicator identification
 	private String objectName = "RENDER_LABEL";
+	
+	ConsoleHelper consoleHelper = new ConsoleHelper();
 			
 	int yOffset = 0;
 
@@ -175,7 +177,7 @@ public class RenderLabel extends JLabel implements MouseMotionListener, MouseLis
 		clickPoint = e.getPoint();
 		//selection = null;
 		dragPoint = null;
-		ConsoleHelper.PrintMessage("fired a mousePressed event ");
+		consoleHelper.PrintMessage("fired a mousePressed event ");
 	}
 	
 	public void paintComponent(Graphics g){
@@ -303,7 +305,7 @@ public class RenderLabel extends JLabel implements MouseMotionListener, MouseLis
 		if (o instanceof KeyEvent) {
 			KeyEvent e = ((KeyEvent) o);
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				ConsoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in RenderLabel" + e.getKeyCode());
+				consoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in RenderLabel" + e.getKeyCode());
 		        dragPoint = null;
 	    		repaint();
 	        }			

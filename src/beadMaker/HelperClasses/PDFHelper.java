@@ -24,6 +24,8 @@ import core.ProcessingHelper;
 
 public class PDFHelper {
 	
+ConsoleHelper consoleHelper = new ConsoleHelper();
+	
 	public volatile BMImage[][][] SavePatternPDF__pdfImage = null;
 	public volatile BMImage[][] SavePatternPDF__localImage = null;
 	public volatile String SavePatternPDF__myPDFFile;
@@ -55,17 +57,21 @@ public class PDFHelper {
 	//---------------------------------------------------------------------------
 	public void SavePatternPDF(boolean fullColorPDFPrinting) {
 
+		DialogBoxHelper dialogBoxHelper = new DialogBoxHelper();
+		FileHelper fileHelper = new FileHelper();
+		ProcessingHelper processingHelper = new ProcessingHelper();
+		
 		int pdfWidth = 1;
 		int	pdfHeight = 1;
 		
-		ConsoleHelper.PrintMessage("SavePatternPDF");
+		consoleHelper.PrintMessage("SavePatternPDF");
 
 		if(
 			imageController.pegboardMode == ImageController.PegboardMode.PERLER_SUPERPEGBOARD_PORTRAIT ||
 			imageController.pegboardMode == ImageController.PegboardMode.PERLER_SUPERPEGBOARD_LANDSCAPE
 		) {
 			imageController.splitSuperPegboard = 
-				DialogBoxHelper.YesNoDialog (
+				dialogBoxHelper.YesNoDialog (
 					"Do you want to split this pegboard into two pages so it fits on 8.5 x 11 paper?",
 					"Question"
 				);
@@ -75,7 +81,7 @@ public class PDFHelper {
 
 		if(imageController.pegboardMode == ImageController.PegboardMode.PERLERMINI) {
 			boolean myResponse = 
-				DialogBoxHelper.YesNoDialog (
+					dialogBoxHelper.YesNoDialog (
 					"Would you like a 2x3 grid of mini pegboards on each page?\n(The alternative is 1 mini pegboard per page.)",
 					"Question"
 				);
@@ -96,7 +102,7 @@ public class PDFHelper {
 
 			SavePatternPDF__myPDFFile = chooser.getSelectedFile().toString();
 
-			if (!FileHelper.getExtension(SavePatternPDF__myPDFFile).equals("pdf")) {
+			if (!fileHelper.getExtension(SavePatternPDF__myPDFFile).equals("pdf")) {
 				SavePatternPDF__myPDFFile += ".pdf";
 			}
 
@@ -109,19 +115,19 @@ public class PDFHelper {
 				}
 			}
 
-			ConsoleHelper.PrintMessage("PDF Filename = ");
-			ConsoleHelper.PrintMessage(SavePatternPDF__myPDFFile);
+			consoleHelper.PrintMessage("PDF Filename = ");
+			consoleHelper.PrintMessage(SavePatternPDF__myPDFFile);
 
-			ConsoleHelper.PrintMessage("Saving PDF Pattern");
+			consoleHelper.PrintMessage("Saving PDF Pattern");
 
 			// turn on the hourglass while stuff is running
 			windowController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 			// FULLRENDER_FULLCOLOR:
-			ConsoleHelper.PrintMessage("Running PDF render for FULLRENDER_FULLCOLOR");
-			ConsoleHelper.PrintMessage("Number of colors: " + pallette.currentPallette.length);
-			ConsoleHelper.PrintMessage("Number of tiles: " + imageController.originalCleanedImage.GetTileCountForImage(imageController.originalCleanedImage, imageController.renderLabel));
-			ConsoleHelper.PrintMessage("Number of tiles: " + imageController.originalCleanedImage.GetTileCountForImage(imageController.originalCleanedImage, imageController.renderLabel));
+			consoleHelper.PrintMessage("Running PDF render for FULLRENDER_FULLCOLOR");
+			consoleHelper.PrintMessage("Number of colors: " + pallette.currentPallette.length);
+			consoleHelper.PrintMessage("Number of tiles: " + imageController.originalCleanedImage.GetTileCountForImage(imageController.originalCleanedImage, imageController.renderLabel));
+			consoleHelper.PrintMessage("Number of tiles: " + imageController.originalCleanedImage.GetTileCountForImage(imageController.originalCleanedImage, imageController.renderLabel));
 			
 			//if "color printing" is selected, do this stuff
 			if(fullColorPDFPrinting) {
@@ -150,9 +156,9 @@ public class PDFHelper {
 							//tempLocalImage = SavePatternPDF__localImage[h][m].HighlightSelectedColor(pallette, h).get();
 							//SavePatternPDF__beadCount[h][m] = SavePatternPDF__localImage[h][m].totalBeadsHightlighted;
 							//BMImage.HighlightSelectedColor(SavePatternPDF__localImage[h][m], pallette, pallette.currentPallette[h][pallette.arrayIndex04_ColorIndex]).save("F:\\My Documents\\Dropbox\\Workspace\\BeadMaker2018\\poop\\SavePatternPDF__localImage_" + h + "_" + m + ".png");
-							SavePatternPDF__localImage[h][m] = BMImage.HighlightSelectedColor(SavePatternPDF__localImage[h][m], pallette, pallette.currentPallette[h][pallette.arrayIndex04_ColorIndex]);
+							SavePatternPDF__localImage[h][m] = SavePatternPDF__localImage[h][m].HighlightSelectedColor(SavePatternPDF__localImage[h][m], pallette, pallette.currentPallette[h][pallette.arrayIndex04_ColorIndex]);
 							//SavePatternPDF__localImage[h][m].save("F:\\My Documents\\Dropbox\\Workspace\\BeadMaker2018\\poop\\SavePatternPDF__localImage_" + h + "_" + m + ".png");
-							ConsoleHelper.PrintMessage("Bead count = " + SavePatternPDF__localImage[h][m].totalBeadsHightlighted);
+							consoleHelper.PrintMessage("Bead count = " + SavePatternPDF__localImage[h][m].totalBeadsHightlighted);
 						}
 					}
 				}
@@ -214,11 +220,11 @@ public class PDFHelper {
 				}
 			}
 			
-			PGraphics pdfCanvas = ProcessingHelper.createGraphics(
+			PGraphics pdfCanvas = processingHelper.createGraphics(
 					pdfWidth + 1,
 					pdfHeight + 1 + SavePatternPDF_textArea_Height,
 					"processing.pdf.PGraphicsPDF",
-					FileHelper.removeExtension(SavePatternPDF__myPDFFile) + ".pdf");
+					fileHelper.removeExtension(SavePatternPDF__myPDFFile) + ".pdf");
 
 			pdfCanvas.beginDraw();
 
@@ -231,7 +237,7 @@ public class PDFHelper {
 			boolean isFirstPage = true;
 
 			// tile iterator
-			ConsoleHelper.PrintMessage("Attempting to iterate over " + SavePatternPDF__pdfImage[0].length + " tiles.");
+			consoleHelper.PrintMessage("Attempting to iterate over " + SavePatternPDF__pdfImage[0].length + " tiles.");
 			for (int j = 0; j < SavePatternPDF__pdfImage[0].length; j++) {
 
 				//if "color printing" is selected, do this stuff
@@ -403,7 +409,7 @@ public class PDFHelper {
 		}
 		else {
 			//imageProcessingFunction = ImageProcessingFunction.NONE;
-			ConsoleHelper.PrintMessage("PDF file creation process failed");
+			consoleHelper.PrintMessage("PDF file creation process failed");
 			return; //bail out because the user did not select a file
 		}
 		return;
@@ -413,7 +419,7 @@ public class PDFHelper {
 	//DrawPDFTileBorder
 	//---------------------------------------------------------------------------
 	synchronized void DrawPDFTileBorder (PGraphics myCanvas, int imageHeight, int imageWidth) {
-		ConsoleHelper.PrintMessage("DrawPDFTileBorder");
+		consoleHelper.PrintMessage("DrawPDFTileBorder");
 		//Draw a solid black outline around the whole tile
 		myCanvas.fill(0,0,0,0); //full transparent
 		myCanvas.rect (
@@ -429,7 +435,7 @@ public class PDFHelper {
 	// DrawPDFFooter
 	//---------------------------------------------------------------------------
 	synchronized void DrawPDFFooter (PGraphics myCanvas, PFont myFont, String myText, int imageHeight, int imageWidth) {
-		ConsoleHelper.PrintMessage("DrawPDFFooter");
+		consoleHelper.PrintMessage("DrawPDFFooter");
 		myCanvas.fill(0); //black
 		myCanvas.textAlign(CENTER, CENTER);
 		myCanvas.textFont(myFont);
