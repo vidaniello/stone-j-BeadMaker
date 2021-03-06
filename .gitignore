@@ -29,6 +29,15 @@ $RECYCLE.BIN/
 
 
 **/PalletteSampler
-**/exe build resources/
-!/exe build resources/InstallPixelPerfect.exe
+
+**/exe build resources/*.bmp
+**/exe build resources/*.xcf
+**/exe build resources/*.ico
+**/exe build resources/*.iss
+**/exe build resources/*.jar
+**/exe build resources/*.png
+**/exe build resources/*.txt
+**/exe build resources/*.xml
+**/exe build resources/jre-8u281-windows-x64.exe
+**/exe build resources/PixelPerfect.exe
 
