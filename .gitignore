@@ -30,8 +30,5 @@ $RECYCLE.BIN/
 
 **/PalletteSampler
 **/exe build resources/
-<<<<<<< HEAD
 !/exe build resources/InstallPixelPerfect.exe
-=======
-!/exe build resources/InstallPixelPerfect.exe
->>>>>>> branch 'master' of https://github.com/stone-j/BeadMaker.git
+
