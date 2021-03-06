@@ -64,7 +64,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 //	ShowPixelsAsBeads showPixelsAsBeads = ShowPixelsAsBeads.OFF;
 
 	static final String
-	youtubeURL = "https://youtu.be/0gvja6lzhSw",
+	youtubeURL = "https://youtu.be/x_SNjAIZV1c", //"https://youtu.be/0gvja6lzhSw",	
 	perlerProjectFileDescription = "Perler Bead Project (*.pbp)",
 	perlerProjectFileExtension = "pbp",
 	configFilePath = "config\\_default_config.xml";

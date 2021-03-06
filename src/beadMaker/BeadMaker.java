@@ -74,7 +74,7 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 		oComm = new InterObjectCommunicator();
 		oComm.setInterObjectCommunicatorEventListener(this);
 		
-		windowController = new WindowController("Pixel Mapper", oComm);	
+		windowController = new WindowController("Pixel Perfect", oComm);	
 		
 		xmlWorker = new XMLWorker();
 				
