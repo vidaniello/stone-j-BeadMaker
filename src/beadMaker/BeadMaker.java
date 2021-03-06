@@ -19,7 +19,7 @@ import core.StringHelper;
 public class BeadMaker implements InterObjectCommunicatorEventListener
 {	
 	/*
-	 TODO:
+	 TODOO:
 	 ------------------------------------------------------------------------------------------------------
 	 ------------- 
 	 BUGS:
