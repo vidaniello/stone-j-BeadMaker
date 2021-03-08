@@ -14,6 +14,8 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -28,6 +30,7 @@ import core.InterObjectCommunicatorEventListener;
 import beadMaker.HelperClasses.PDFHelper;
 import beadMaker.HelperClasses.XMLWorker;
 import java.io.IOException;
+
 
 public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventListener {
 
@@ -555,6 +558,20 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 			File projectFile = new File(myProjectName);
 
 			if (!projectFile.exists()) {
+				//-----------------------------------------------
+				//this block attempts to set the file chooser 
+				// to a Windows-style file chooser
+				// https://stackoverflow.com/questions/51022662/having-the-windows-ui-display-when-using-jfilechooser/51074520
+				//-----------------------------------------------
+				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+						| UnsupportedLookAndFeelException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//-----------------------------------------------
+				//-----------------------------------------------
 				JFileChooser chooser = new JFileChooser();
 				//File dataDir = new File(System.getProperty("user.dir"), "\\");
 				File dataDir = new File(xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML), "\\");

@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import core.ColorHelper;
@@ -202,6 +204,21 @@ public class BMImage extends PImage {
 	void SavePNG() {
 		consoleHelper.PrintMessage("SavePNG");
 
+		//-----------------------------------------------
+		//this block attempts to set the file chooser 
+		// to a Windows-style file chooser
+		// https://stackoverflow.com/questions/51022662/having-the-windows-ui-display-when-using-jfilechooser/51074520
+		//-----------------------------------------------
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//-----------------------------------------------
+		//-----------------------------------------------
+		
 		//Show the save file dialog to the user
 		JFileChooser chooser = new JFileChooser();
 		File dataDir = new File(System.getProperty("user.dir"), "\\");
@@ -248,6 +265,21 @@ public class BMImage extends PImage {
 	void SaveSCAD() {
 		consoleHelper.PrintMessage("SaveSCAD");
 
+		//-----------------------------------------------
+		//this block attempts to set the file chooser 
+		// to a Windows-style file chooser
+		// https://stackoverflow.com/questions/51022662/having-the-windows-ui-display-when-using-jfilechooser/51074520
+		//-----------------------------------------------
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//-----------------------------------------------
+		//-----------------------------------------------
+		
 		//Show the save file dialog to the user
 		JFileChooser chooser = new JFileChooser();
 		File dataDir = new File(System.getProperty("user.dir"), "\\");
