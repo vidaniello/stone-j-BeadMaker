@@ -6,18 +6,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import core.ColorHelper;
 import processing.core.PImage;
 import core.ConsoleHelper;
 import core.FileHelper;
 import core.MathHelper;
-import core.ProcessingHelper;
+import core.SynchronousJFXFileChooser;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class BMImage extends PImage {
 	
@@ -204,43 +201,28 @@ public class BMImage extends PImage {
 	void SavePNG() {
 		consoleHelper.PrintMessage("SavePNG");
 
-		//-----------------------------------------------
-		//this block attempts to set the file chooser 
-		// to a Windows-style file chooser
-		// https://stackoverflow.com/questions/51022662/having-the-windows-ui-display-when-using-jfilechooser/51074520
-		//-----------------------------------------------
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//-----------------------------------------------
-		//-----------------------------------------------
-		
-		//Show the save file dialog to the user
-		JFileChooser chooser = new JFileChooser();
 		File dataDir = new File(System.getProperty("user.dir"), "\\");
-		chooser.setSelectedFile(dataDir);
-		FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Portable Network Graphics (*.png)", "png");
-		chooser.setFileFilter(fileFilter);
-		int returnVal = chooser.showSaveDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-			SavePNG__myPNGFile = chooser.getSelectedFile().toString();
+		ExtensionFilter fileFilter = new ExtensionFilter("Portable Network Graphics (*.png)", "*.png");
+		
+		File selectedFile;
+		
+		//stackoverflow.com/questions/39819319/windows-native-file-chooser-in-java			
+		//this prevents "toolkit not initialized" error
+		new JFXPanel();
+        Platform.setImplicitExit(false);
+        
+        SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
+        	dataDir,
+        	fileFilter
+        );
+        selectedFile = chooser.showSaveDialog();	            
+        
+        if (selectedFile != null) {
+        	
+        	SavePNG__myPNGFile = selectedFile.toString();
 
 			if (!fileHelper.getExtension(SavePNG__myPNGFile).equals("png")) {
 				SavePNG__myPNGFile += ".png";
-			}
-
-			File selectedFile = new File(SavePNG__myPNGFile);
-			if (selectedFile.exists()) {
-				int dialogButton = JOptionPane.YES_NO_OPTION;
-				int dialogResult = JOptionPane.showConfirmDialog (null, "Overwrite Existing File?","Warning", dialogButton);
-				if (dialogResult == JOptionPane.NO_OPTION) {
-					return; //if the user says "no" to "overwrite existing file?", then bail out.
-				}
 			}
 
 			consoleHelper.PrintMessage("PNG Filename = " + SavePNG__myPNGFile);
@@ -254,9 +236,7 @@ public class BMImage extends PImage {
 			consoleHelper.PrintMessage("PNG file creation process failed");
 			return; //bail out because the user did not select a file
 		}
-	}
-	
-	
+	}	
 	
 	
 	//---------------------------------------------------------------------------
@@ -265,43 +245,28 @@ public class BMImage extends PImage {
 	void SaveSCAD() {
 		consoleHelper.PrintMessage("SaveSCAD");
 
-		//-----------------------------------------------
-		//this block attempts to set the file chooser 
-		// to a Windows-style file chooser
-		// https://stackoverflow.com/questions/51022662/having-the-windows-ui-display-when-using-jfilechooser/51074520
-		//-----------------------------------------------
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//-----------------------------------------------
-		//-----------------------------------------------
-		
-		//Show the save file dialog to the user
-		JFileChooser chooser = new JFileChooser();
 		File dataDir = new File(System.getProperty("user.dir"), "\\");
-		chooser.setSelectedFile(dataDir);
-		FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("OpenSCAD Designs (*.scad)", "scad");
-		chooser.setFileFilter(fileFilter);
-		int returnVal = chooser.showSaveDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-			SaveSCAD__mySCADFile = chooser.getSelectedFile().toString();
+		ExtensionFilter fileFilter = new ExtensionFilter("OpenSCAD Designs (*.scad)", "*.scad");
+		
+		File selectedFile;
+		
+		//stackoverflow.com/questions/39819319/windows-native-file-chooser-in-java			
+		//this prevents "toolkit not initialized" error
+		new JFXPanel();
+        Platform.setImplicitExit(false);
+        
+        SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
+        	dataDir,
+        	fileFilter
+        );
+        selectedFile = chooser.showSaveDialog();	            
+        
+        if (selectedFile != null) {
+        	
+        	SaveSCAD__mySCADFile = selectedFile.toString();
 
 			if (!fileHelper.getExtension(SaveSCAD__mySCADFile).equals("scad")) {
 				SaveSCAD__mySCADFile += ".scad";
-			}
-
-			File selectedFile = new File(SaveSCAD__mySCADFile);
-			if (selectedFile.exists()) {
-				int dialogButton = JOptionPane.YES_NO_OPTION;
-				int dialogResult = JOptionPane.showConfirmDialog (null, "Overwrite Existing File?","Warning", dialogButton);
-				if (dialogResult == JOptionPane.NO_OPTION) {
-					return; //if the user says "no" to "overwrite existing file?", then bail out.
-				}
 			}
 
 			consoleHelper.PrintMessage("SCAD Filename = " + SavePNG__myPNGFile);
@@ -378,10 +343,7 @@ public class BMImage extends PImage {
 			consoleHelper.PrintMessage("SCAD file creation process failed");
 			return; //bail out because the user did not select a file
 		}
-	}
-
-
-	
+	}	
 
 
 	//---------------------------------------------------------------------------

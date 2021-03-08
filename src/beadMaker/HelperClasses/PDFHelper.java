@@ -5,12 +5,6 @@ import java.awt.Font;
 import java.io.File;
 import java.util.List;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.pdf.PGraphicsPDF;
@@ -23,6 +17,10 @@ import core.ConsoleHelper;
 import core.DialogBoxHelper;
 import core.FileHelper;
 import core.ProcessingHelper;
+import core.SynchronousJFXFileChooser;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class PDFHelper {
 	
@@ -94,45 +92,33 @@ ConsoleHelper consoleHelper = new ConsoleHelper();
 		}
 
 		//-----------------------------------------------
-		//this block attempts to set the file chooser 
-		// to a Windows-style file chooser
-		// https://stackoverflow.com/questions/51022662/having-the-windows-ui-display-when-using-jfilechooser/51074520
-		//-----------------------------------------------
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//-----------------------------------------------
+		// NEW BLOCK
 		//-----------------------------------------------
 		
-		//Show the save file dialog to the user
-		JFileChooser chooser = new JFileChooser();
 		File dataDir = new File(System.getProperty("user.dir"), "\\");
-		chooser.setSelectedFile(dataDir);
-		FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Portable Document Format (*.pdf)", "pdf");
-		chooser.setFileFilter(fileFilter);
-		int returnVal = chooser.showSaveDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-			SavePatternPDF__myPDFFile = chooser.getSelectedFile().toString();
-
-			if (!fileHelper.getExtension(SavePatternPDF__myPDFFile).equals("pdf")) {
+		ExtensionFilter fileFilter = new ExtensionFilter("Portable Document Format (*.pdf)", "*.pdf");
+		
+		File selectedFile;
+		
+		//stackoverflow.com/questions/39819319/windows-native-file-chooser-in-java			
+		//this prevents "toolkit not initialized" error
+		new JFXPanel();
+        Platform.setImplicitExit(false);
+        
+        SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
+        	dataDir,
+        	fileFilter
+        );
+        selectedFile = chooser.showSaveDialog();	            
+        
+        if (selectedFile != null) {
+        	SavePatternPDF__myPDFFile = selectedFile.toString(); 
+        	
+        	if (!fileHelper.getExtension(SavePatternPDF__myPDFFile).equals("pdf")) {
 				SavePatternPDF__myPDFFile += ".pdf";
-			}
-
-			File selectedFile = new File(SavePatternPDF__myPDFFile);
-			if (selectedFile.exists()) {
-				int dialogButton = JOptionPane.YES_NO_OPTION;
-				int dialogResult = JOptionPane.showConfirmDialog (null, "Overwrite Existing File?","Warning", dialogButton);
-				if (dialogResult == JOptionPane.NO_OPTION) {
-					return; //if the user says "no" to "overwrite existing file?", then bail out.
-				}
-			}
-
-			consoleHelper.PrintMessage("PDF Filename = ");
+			}	
+        	
+        	consoleHelper.PrintMessage("PDF Filename = ");
 			consoleHelper.PrintMessage(SavePatternPDF__myPDFFile);
 
 			consoleHelper.PrintMessage("Saving PDF Pattern");

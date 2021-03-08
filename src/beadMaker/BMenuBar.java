@@ -14,11 +14,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
+
 import processing.data.XML;
 import beadMaker.Palette.ExcludePearls;
 import beadMaker.Palette.ExcludeTranslucents;
@@ -27,29 +23,27 @@ import core.ConsoleHelper;
 import core.ConsoleHelper.MessageLevel;
 import core.FileHelper;
 import core.InterObjectCommunicatorEventListener;
+import core.SynchronousJFXFileChooser;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.stage.FileChooser.ExtensionFilter;
 import beadMaker.HelperClasses.PDFHelper;
 import beadMaker.HelperClasses.XMLWorker;
 import java.io.IOException;
 
-
 public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventListener {
 
-	//For InterObjectCommunicator identification
+	// For InterObjectCommunicator identification
 	private String objectName = "MENU_BAR";
-	
+
 	ConsoleHelper consoleHelper = new ConsoleHelper();
 	FileHelper fileHelper = new FileHelper();
-		
-	private int customPalletteIndex = 0;
-	
+
+	// private int customPalletteIndex = 0;
+
 	String imageFileDescription = "All Supported Image Types (*.png, *.jpg, *.tga, *.gif)";
-	String[] imageFileExtensions = {
-		"png",
-		"jpg",
-		"tga",
-		"gif"
-	};
-	
+	String[] imageFileExtensions = { "png", "jpg", "tga", "gif" };
+
 //	enum ShowPixelsAsBeads {
 //		OFF,
 //		ON;
@@ -67,35 +61,33 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 //	ShowPixelsAsBeads showPixelsAsBeads = ShowPixelsAsBeads.OFF;
 
 	static final String
-	youtubeURL = "https://youtu.be/x_SNjAIZV1c", //"https://youtu.be/0gvja6lzhSw",	
-	perlerProjectFileDescription = "Perler Bead Project (*.pbp)",
-	perlerProjectFileExtension = "pbp",
-	configFilePath = "config\\_default_config.xml";
+		youtubeURL = "https://youtu.be/x_SNjAIZV1c", // "https://youtu.be/0gvja6lzhSw",
+		perlerProjectFileDescription = "Perler Bead Project (*.pbp)", perlerProjectFileExtension = "pbp",
+		configFilePath = "config\\_default_config.xml";
 
 	public String imageFile = "";
-	//public String customPalletteFile = "";
+	// public String customPalletteFile = "";
 	String currentProjectName = "Untitled";
 	String defaultProjectFilePath;
-	
-	//initialize menu options
-	private Menu 	 			fileMenu		= new Menu				("File");
-	private MenuItem 			openProject		= new MenuItem			("Open Project...                      Ctrl+O");
-	private MenuItem 			selectImage		= new MenuItem			("Select Image...                     Ctrl+I");
-	private Menu 	 			menu_image		= new Menu				("Images");
-	private MenuItem 			savePNG			= new MenuItem			("Export PNG...                         Ctrl+E");
-	private MenuItem 			savePattern		= new MenuItem			("Export B&W PDF Pattern...  Ctrl+D");
-	private MenuItem 			saveColorPattern= new MenuItem			("Export Color PDF Pattern... Ctrl+Shift+D");
-	private MenuItem 			saveSCAD		= new MenuItem			("Export SCAD...                          ");
-	private MenuItem 			saveProject		= new MenuItem			("Save Project                          Ctrl+S");
-	private MenuItem 			saveProjectAs	= new MenuItem			("Save Project As...                 Ctrl+Shift+S");
-	private MenuItem 			exit			= new MenuItem			("Exit                                           Ctrl+Shift+X"); 
 
-	private Menu 	 			settingsMenu	= new Menu				("Settings");
-	private CheckboxMenuItem 	expertMode		= new CheckboxMenuItem	("  Expert Mode          Ctrl+M"); //leave extra whitespace to the left for the checkbox
-	
-	private Menu 	 			helpMenu		= new Menu				("Help");
-	private MenuItem 			tutorialVideo	= new MenuItem			("Tutorial Video (YouTube)");
+	// initialize menu options
+	private Menu fileMenu = new Menu("File");
+	private MenuItem openProject = new MenuItem("Open Project...                      Ctrl+O");
+	private MenuItem selectImage = new MenuItem("Select Image...                     Ctrl+I");
+	private Menu menu_image = new Menu("Images");
+	private MenuItem savePNG = new MenuItem("Export PNG...                         Ctrl+E");
+	private MenuItem savePattern = new MenuItem("Export B&W PDF Pattern...  Ctrl+D");
+	private MenuItem saveColorPattern = new MenuItem("Export Color PDF Pattern... Ctrl+Shift+D");
+	private MenuItem saveSCAD = new MenuItem("Export SCAD...                          ");
+	private MenuItem saveProject = new MenuItem("Save Project                          Ctrl+S");
+	private MenuItem saveProjectAs = new MenuItem("Save Project As...                 Ctrl+Shift+S");
+	private MenuItem exit = new MenuItem("Exit                                           Ctrl+Shift+X");
 
+	private Menu settingsMenu = new Menu("Settings");
+	private CheckboxMenuItem expertMode = new CheckboxMenuItem("  Expert Mode          Ctrl+M"); // leave extra
+
+	private Menu helpMenu = new Menu("Help");
+	private MenuItem tutorialVideo = new MenuItem("Tutorial Video (YouTube)");
 
 	public ImageController imageController;
 	public BeadMaker beadMaker;
@@ -105,37 +97,37 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	public ControlPanel controlPanel;
 	InterObjectCommunicator oComm;
 
-	//CONSTRUCTOR
-	public BMenuBar(XML[] configXML, XMLWorker myXMLHelper, ImageController myImageController, ControlPanel myControlPanel, BeadMaker myBeadMaker, InterObjectCommunicator myOComm) throws Exception
-	{		
+	// CONSTRUCTOR
+	public BMenuBar(XML[] configXML, XMLWorker myXMLHelper, ImageController myImageController, ControlPanel myControlPanel, BeadMaker myBeadMaker, InterObjectCommunicator myOComm) throws Exception {
 		super();
 		oComm = myOComm;
 		oComm.setInterObjectCommunicatorEventListener(this);
-		//((MenuComponent)this).getAccessibleContext().firePropertyChange(arg0, arg1, arg2);
-		//awtMenu = new AccessibleAWTMenuBar();
-		//this.AccessibleAWTMenu.
-		//setForeground
+		// ((MenuComponent)this).getAccessibleContext().firePropertyChange(arg0, arg1,
+		// arg2);
+		// awtMenu = new AccessibleAWTMenuBar();
+		// this.AccessibleAWTMenu.
+		// setForeground
 		this.beadMaker = myBeadMaker;
 		this.imageController = myImageController;
 		this.xmlHelper = myXMLHelper;
 		this.controlPanel = myControlPanel;
 		this.defaultProjectFilePath = xmlHelper.GetAbsoluteFilePathStringFromXml("defaultProjectFilePath", xmlHelper.configXML);
 
-		expertMode.setState(xmlHelper.GetIntFromXml("expertMode", xmlHelper.configXML) == 1 ? true: false);
-		
+		expertMode.setState(xmlHelper.GetIntFromXml("expertMode", xmlHelper.configXML) == 1 ? true : false);
+
 		consoleHelper.PrintMessage("$$$$$$$$$$$$$$$$HOLY SCHNIKES$$$$$$$$$$$$$$$$$$", MessageLevel.MESSAGE);
-		
-		//populate images submenu
+
+		// populate images submenu
 		File myImagePath = new File(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", configXML));
 		if (myImagePath.isDirectory()) {
 			consoleHelper.PrintMessage(myImagePath.toString());
-			PopulateImageMenu(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", configXML));			
+			PopulateImageMenu(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", configXML));
 		} else {
 			consoleHelper.PrintMessage(System.getProperty("user.dir") + File.separator + "images");
 			PopulateImageMenu(System.getProperty("user.dir") + File.separator + "images");
 		}
 
-		//construct the menu
+		// construct the menu
 		this.add(fileMenu);
 		fileMenu.add(openProject);
 		fileMenu.add(saveProject);
@@ -150,15 +142,14 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		fileMenu.add(saveSCAD);
 		fileMenu.addSeparator();
 		fileMenu.add(exit);
-		
+
 		this.add(settingsMenu);
 		settingsMenu.add(expertMode);
 
 		this.add(helpMenu);
 		helpMenu.add(tutorialVideo);
 
-
-		//add event listeners
+		// add event listeners
 		openProject.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				OpenProject();
@@ -184,7 +175,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 				SavePattern(false);
 			}
 		});
-		
+
 		saveColorPattern.addActionListener(new ActionListener() {
 			synchronized public void actionPerformed(ActionEvent e) {
 				SavePattern(true);
@@ -193,7 +184,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 
 		saveProject.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SaveProject(currentProjectName);		
+				SaveProject(currentProjectName);
 			}
 		});
 
@@ -208,18 +199,18 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 				System.exit(0);
 			}
 		});
-		//	stats.addActionListener(new ActionListener() {
-		//		synchronized public void actionPerformed(ActionEvent e) {
-		//			displayNumericData();
-		//		}
-		//	});
-		
+		// stats.addActionListener(new ActionListener() {
+		// synchronized public void actionPerformed(ActionEvent e) {
+		// displayNumericData();
+		// }
+		// });
+
 		expertMode.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				SetExpertMode();
 			}
 		});
-		
+
 		tutorialVideo.addActionListener(new ActionListener() {
 			synchronized public void actionPerformed(ActionEvent e) {
 				OpenYouTubeVideo();
@@ -227,86 +218,73 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		});
 
 	}
-		
-	
-	//---------------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------------
 	// SavePattern
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	void SavePattern(boolean fullColorPDFPrinting) {
-		PDFHelper pdfHelper = new PDFHelper(beadMaker.windowController, imageController); 
+		PDFHelper pdfHelper = new PDFHelper(beadMaker.windowController, imageController);
 		pdfHelper.SavePatternPDF(fullColorPDFPrinting);
 	}
-	
-	
-	//---------------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------------
 	// SelectImage
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	void SelectImage() {
 
 		File myImagePath = new File(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", xmlHelper.configXML));
 		if (myImagePath.isDirectory()) {
 			consoleHelper.PrintMessage(myImagePath.toString());
-			LoadImage(
-				fileHelper.GetFilenameFromFileChooser(
-					imageFileExtensions,
-					imageFileDescription,
-					xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", xmlHelper.configXML)
-				),
-				true
-			);
+			String imageToLoad = fileHelper.GetFilenameFromFileChooser(imageFileExtensions, imageFileDescription, xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", xmlHelper.configXML));
+			if (imageToLoad != null) {
+				LoadImage(imageToLoad, true);
+			}
 		} else {
-			//PopulateImageMenu(sketchPath("") + "images");
+			// PopulateImageMenu(sketchPath("") + "images");
 			consoleHelper.PrintMessage(System.getProperty("user.dir") + File.separator + "images");
-			//PopulateImageMenu(System.getProperty("user.dir") + File.separator + "images");
-			String imageToLoad =
-				fileHelper.GetFilenameFromFileChooser (
-					imageFileExtensions,
-					imageFileDescription,
-					System.getProperty("user.dir") + File.separator + "images"
-				);
+			// PopulateImageMenu(System.getProperty("user.dir") + File.separator +
+			// "images");
+			String imageToLoad = fileHelper.GetFilenameFromFileChooser(imageFileExtensions, imageFileDescription, System.getProperty("user.dir") + File.separator + "images");
 			if (imageToLoad != null) {
 				LoadImage(imageToLoad, true);
 			}
 		}
 	}
-	
-	
-	//---------------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------------
 	// SetExpertMode
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	void SetExpertMode() {
 		controlPanel.setExpertMode(expertMode.getState());
 		xmlHelper.AlterXML("expertMode", Integer.toString(expertMode.getState() ? 1 : 0), configFilePath);
 	}
 
-
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	// LoadImage
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	void LoadImage(String myImageFilename, boolean updateImagePath) {
 		consoleHelper.PrintMessage("LoadImage");
-		
+
 		this.imageFile = myImageFilename;
-		
+
 		oComm.communicate("set image file", myImageFilename, "IMAGE_CONTROLLER");
 		oComm.communicate(-1, "IMAGE_CONTROLLER");
 		oComm.communicate(-1, "PALETTE");
-		
+
 		if (updateImagePath) {
 			String myImagePath = myImageFilename.substring(0, myImageFilename.lastIndexOf(File.separator));
 
 			xmlHelper.AlterXML("currentImagePath", myImagePath, configFilePath);
-			//reload the XML into the variable
+			// reload the XML into the variable
 			xmlHelper.configXML = xmlHelper.GetXMLFromFile(configFilePath);
 
 			PopulateImageMenu(myImagePath);
 		}
 	}
 
-
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	// PopulateImageMenu
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	private void PopulateImageMenu(String path) {
 		int imageIndex = 0;
 
@@ -321,12 +299,12 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 			if (file.isFile() && extension.equals("png")) {
 				menuItem_images[imageIndex] = new MenuItem(file.getName());
 				menu_image.add(menuItem_images[imageIndex]);
-				//add event listeners
+				// add event listeners
 				menuItem_images[imageIndex].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						imageFile = file.getAbsoluteFile().toString();
 						consoleHelper.PrintMessage(imageFile);
-						//SetFrameTitle(renderPApplet, currentProjectName);
+						// SetFrameTitle(renderPApplet, currentProjectName);
 						LoadImage(imageFile, false);
 					}
 				});
@@ -335,10 +313,9 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		}
 	}
 
-
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	// OpenYouTubeVideo
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	synchronized void OpenYouTubeVideo() {
 		consoleHelper.PrintMessage("OpenYouTubeVideo");
 
@@ -346,165 +323,158 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 
 		try {
 			uri = new URI(youtubeURL);
-		} catch (URISyntaxException e) {}
+		} catch (URISyntaxException e) {
+		}
 
 		if (Desktop.isDesktopSupported()) {
 			try {
 				Desktop.getDesktop().browse(uri);
-			}
-			catch (IOException e) { /* TODO: error handling */ }
-		}
-		else { /* TODO: error handling */ }
+			} catch (IOException e) {
+				/* TODO: error handling */ }
+		} else {
+			/* TODO: error handling */ }
 	}
 
-
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	// OpenProject
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	synchronized void OpenProject() {
 		GetProjectFromFileChooser();
 	}
 
-
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	// GetProjectNameFromFileChooser
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	public void GetProjectFromFileChooser() {
 		consoleHelper.PrintMessage("GetProjectNameFromFileChooser");
 
-		String myChosenProjectFile = fileHelper.GetFilenameFromFileChooser(
-			new String[] {perlerProjectFileExtension},
-			perlerProjectFileDescription,
-			xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML)
-		);
-		
+		String myChosenProjectFile = fileHelper.GetFilenameFromFileChooser(new String[] { perlerProjectFileExtension }, perlerProjectFileDescription, xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML));
+
 		if (myChosenProjectFile != null && !myChosenProjectFile.isEmpty()) {
-		
+
 			String myChosenProjectPath = myChosenProjectFile.substring(0, myChosenProjectFile.lastIndexOf(File.separator));
 
 			xmlHelper.AlterXML("currentProjectFilePath", myChosenProjectPath, configFilePath);
-			
+
 			LoadProject(myChosenProjectFile);
 		}
 	}
 
-
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	// LoadProject
-	//---------------------------------------------------------------------------
-	//TODO: load project info and use it to set all controls, load image, etc.
+	// ---------------------------------------------------------------------------
+	// TODO: load project info and use it to set all controls, load image, etc.
 	public void LoadProject(String myProjectFile) {
 		LoadProject(myProjectFile, true);
 	}
-			
-			
-	//---------------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------------
 	// LoadProject
-	//---------------------------------------------------------------------------
-	//TODO: load project info and use it to set all controls, load image, etc.
+	// ---------------------------------------------------------------------------
+	// TODO: load project info and use it to set all controls, load image, etc.
 	public void LoadProject(String myProjectFile, boolean updateCurrentProjectFilePath) {
 		consoleHelper.PrintMessage("LoadProject");
 		consoleHelper.PrintMessage("Loading Project: " + myProjectFile);
 
 		xmlHelper.projectXML = xmlHelper.GetXMLFromFile(myProjectFile);
 
-		imageFile							=				 xmlHelper.GetAbsoluteFilePathStringFromXml	("imageFile"	, xmlHelper.projectXML);
+		imageFile = xmlHelper.GetAbsoluteFilePathStringFromXml("imageFile", xmlHelper.projectXML);
 
-		//set control dials to values in project xml
-		controlPanel.sliderRed			.setValue			(xmlHelper.GetIntFromXml("dialValues.red"					, xmlHelper.projectXML));
-		controlPanel.sliderGreen		.setValue			(xmlHelper.GetIntFromXml("dialValues.green"					, xmlHelper.projectXML));
-		controlPanel.sliderBlue			.setValue			(xmlHelper.GetIntFromXml("dialValues.blue"					, xmlHelper.projectXML));
-		controlPanel.sliderBrightness	.setValue			(xmlHelper.GetIntFromXml("dialValues.brightness"			, xmlHelper.projectXML));
-		controlPanel.sliderContrast		.setValue			(xmlHelper.GetIntFromXml("dialValues.contrast"				, xmlHelper.projectXML));
-		controlPanel.sliderSaturation	.setValue			(xmlHelper.GetIntFromXml("dialValues.saturation"			, xmlHelper.projectXML));
-		controlPanel.sliderDither		.setValue			(xmlHelper.GetIntFromXml("dialValues.ditherLevel"			, xmlHelper.projectXML));
-		controlPanel.sliderSharpness	.setValue			(xmlHelper.GetIntFromXml("dialValues.sharpness"				, xmlHelper.projectXML));
-		controlPanel.sliderScale		.setValue			(xmlHelper.GetIntFromXml("dialValues.imageScale"			, xmlHelper.projectXML));
-		controlPanel.sliderZoom			.setValue			(xmlHelper.GetIntFromXml("dialValues.zoom"					, xmlHelper.projectXML));
-		controlPanel.ditherMethod		.setSelectedIndex	(xmlHelper.GetIntFromXml("displaySettings.ditherMethod"		, xmlHelper.projectXML));
-		//controlPanel.customPallette		.setSelectedIndex	(xmlHelper.GetIntFromXml("displaySettings.selectedPallette"	, xmlHelper.projectXML));
-		controlPanel.pegboardSize		.setSelectedIndex	(xmlHelper.GetIntFromXml("displaySettings.pegboardMode"		, xmlHelper.projectXML));
+		// set control dials to values in project xml
+		controlPanel.sliderRed.setValue(xmlHelper.GetIntFromXml("dialValues.red", xmlHelper.projectXML));
+		controlPanel.sliderGreen.setValue(xmlHelper.GetIntFromXml("dialValues.green", xmlHelper.projectXML));
+		controlPanel.sliderBlue.setValue(xmlHelper.GetIntFromXml("dialValues.blue", xmlHelper.projectXML));
+		controlPanel.sliderBrightness.setValue(xmlHelper.GetIntFromXml("dialValues.brightness", xmlHelper.projectXML));
+		controlPanel.sliderContrast.setValue(xmlHelper.GetIntFromXml("dialValues.contrast", xmlHelper.projectXML));
+		controlPanel.sliderSaturation.setValue(xmlHelper.GetIntFromXml("dialValues.saturation", xmlHelper.projectXML));
+		controlPanel.sliderDither.setValue(xmlHelper.GetIntFromXml("dialValues.ditherLevel", xmlHelper.projectXML));
+		controlPanel.sliderSharpness.setValue(xmlHelper.GetIntFromXml("dialValues.sharpness", xmlHelper.projectXML));
+		controlPanel.sliderScale.setValue(xmlHelper.GetIntFromXml("dialValues.imageScale", xmlHelper.projectXML));
+		controlPanel.sliderZoom.setValue(xmlHelper.GetIntFromXml("dialValues.zoom", xmlHelper.projectXML));
+		controlPanel.ditherMethod.setSelectedIndex(xmlHelper.GetIntFromXml("displaySettings.ditherMethod", xmlHelper.projectXML));
+		// controlPanel.customPallette .setSelectedIndex
+		// (xmlHelper.GetIntFromXml("displaySettings.selectedPallette" ,
+		// xmlHelper.projectXML));
+		controlPanel.pegboardSize.setSelectedIndex(xmlHelper.GetIntFromXml("displaySettings.pegboardMode", xmlHelper.projectXML));
 
-		String selectedPalette = xmlHelper.GetDataFromXml("displaySettings.selectedPallette"	, xmlHelper.projectXML);
-		
-		//if the pbp stored palette filename matches the palette filename, set it as the selected palette in the UI
+		String selectedPalette = xmlHelper.GetDataFromXml("displaySettings.selectedPallette", xmlHelper.projectXML);
+
+		// if the pbp stored palette filename matches the palette filename, set it as
+		// the selected palette in the UI
 		for (int i = 0; i < controlPanel.customPalletteFiles.length; i++) {
 			if (selectedPalette.equals(controlPanel.customPalletteFiles[0][i])) {
 				controlPanel.customPallette.setSelectedIndex(i);
 			}
-		}		
-		
-		//This is for backward compatibility for projects that did not have "displaySettings.flipImage"
-		//If we add more new project settings,
-		//this try catch might not be smart enough to know which XML field is missing,
-		//but for now it works, since there's only one new field.
+		}
+
+		// This is for backward compatibility for projects that did not have
+		// "displaySettings.flipImage"
+		// If we add more new project settings,
+		// this try catch might not be smart enough to know which XML field is missing,
+		// but for now it works, since there's only one new field.
 		try {
 			imageController.flipImage = xmlHelper.GetIntFromXml("displaySettings.flipImage", xmlHelper.projectXML) == 1 ? true : false;
-			controlPanel.flipImageCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("displaySettings.flipImage", xmlHelper.projectXML) == 1 ? true: false);
+			controlPanel.flipImageCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("displaySettings.flipImage", xmlHelper.projectXML) == 1 ? true : false);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			controlPanel.flipImageCheckboxPanel.checkbox.setSelected(false);
 		}
-		
-		boolean perlerCheckBoxState = xmlHelper.GetIntFromXml("brandsToUse.perler"	, xmlHelper.projectXML) == 1 ? true: false;
-		boolean artkalCheckBoxState = xmlHelper.GetIntFromXml("brandsToUse.artkalS"	, xmlHelper.projectXML) == 1 ? true: false;
 
-		consoleHelper.PrintMessage("brandsToUse.perler = " + xmlHelper.GetIntFromXml("brandsToUse.perler"	, xmlHelper.projectXML));
-		consoleHelper.PrintMessage("brandsToUse.artkalS = " + xmlHelper.GetIntFromXml("brandsToUse.artkalS"	, xmlHelper.projectXML));
+		boolean perlerCheckBoxState = xmlHelper.GetIntFromXml("brandsToUse.perler", xmlHelper.projectXML) == 1 ? true : false;
+		boolean artkalCheckBoxState = xmlHelper.GetIntFromXml("brandsToUse.artkalS", xmlHelper.projectXML) == 1 ? true : false;
 
-		//if both brands are unchecked (which is an invalid state, but *could* happen, check Perler by default
-		if(!artkalCheckBoxState) {
-			this.controlPanel.perlerCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Perler"	, true));
-			this.controlPanel.artkalCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Artkal-S"	, false));
-		} else if(!perlerCheckBoxState) {
-			this.controlPanel.artkalCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Artkal-S"	, true));
-			this.controlPanel.perlerCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Perler"	, false));
+		consoleHelper.PrintMessage("brandsToUse.perler = " + xmlHelper.GetIntFromXml("brandsToUse.perler", xmlHelper.projectXML));
+		consoleHelper.PrintMessage("brandsToUse.artkalS = " + xmlHelper.GetIntFromXml("brandsToUse.artkalS", xmlHelper.projectXML));
+
+		// if both brands are unchecked (which is an invalid state, but *could* happen,
+		// check Perler by default
+		if (!artkalCheckBoxState) {
+			this.controlPanel.perlerCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Perler", true));
+			this.controlPanel.artkalCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Artkal-S", false));
+		} else if (!perlerCheckBoxState) {
+			this.controlPanel.artkalCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Artkal-S", true));
+			this.controlPanel.perlerCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Perler", false));
 		} else {
-			this.controlPanel.perlerCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Perler"	, true));
-			this.controlPanel.artkalCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Artkal-S"	, true));
+			this.controlPanel.perlerCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Perler", true));
+			this.controlPanel.artkalCheckboxPanel.checkbox.setSelected(imageController.pallette.setBeadBrand("Artkal-S", true));
 		}
 
 		consoleHelper.PrintMessage("controlPanel.perlerCheckboxPanel.checkbox = " + controlPanel.perlerCheckboxPanel.checkbox.isSelected());
 		consoleHelper.PrintMessage("controlPanel.artkalCheckboxPanel.checkbox = " + controlPanel.artkalCheckboxPanel.checkbox.isSelected());
 
-		this.controlPanel.showGridCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("displaySettings.showGrid"	, xmlHelper.projectXML) == 1 ? true: false);
-		imageController.renderLabel.showGrid = xmlHelper.GetIntFromXml("displaySettings.showGrid", xmlHelper.projectXML) == 1 ? true: false;
+		this.controlPanel.showGridCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("displaySettings.showGrid", xmlHelper.projectXML) == 1 ? true : false);
+		imageController.renderLabel.showGrid = xmlHelper.GetIntFromXml("displaySettings.showGrid", xmlHelper.projectXML) == 1 ? true : false;
 
-
-		this.controlPanel.renderPixelsAsBeadsCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("displaySettings.showPixelsAsBeads"	, xmlHelper.projectXML) == 1 ? true: false);
-		imageController.setRenderPixelsAsBeads(xmlHelper.GetIntFromXml("displaySettings.showPixelsAsBeads", xmlHelper.projectXML) == 1 ? true: false);
+		this.controlPanel.renderPixelsAsBeadsCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("displaySettings.showPixelsAsBeads", xmlHelper.projectXML) == 1 ? true : false);
+		imageController.setRenderPixelsAsBeads(xmlHelper.GetIntFromXml("displaySettings.showPixelsAsBeads", xmlHelper.projectXML) == 1 ? true : false);
 
 		Color bgColor = new Color(
-				xmlHelper.GetIntFromXml("displaySettings.backgroundColor.red", xmlHelper.projectXML),
-				xmlHelper.GetIntFromXml("displaySettings.backgroundColor.green", xmlHelper.projectXML),
-				xmlHelper.GetIntFromXml("displaySettings.backgroundColor.blue", xmlHelper.projectXML)
-				);
+			xmlHelper.GetIntFromXml("displaySettings.backgroundColor.red", xmlHelper.projectXML),
+			xmlHelper.GetIntFromXml("displaySettings.backgroundColor.green", xmlHelper.projectXML),
+			xmlHelper.GetIntFromXml("displaySettings.backgroundColor.blue", xmlHelper.projectXML)
+		);
 		imageController.renderScrollPanel.getViewport().setBackground(bgColor);
 
-
 		Color gridColor = new Color(
-				xmlHelper.GetIntFromXml("displaySettings.gridColor.red"		, xmlHelper.projectXML),
-				xmlHelper.GetIntFromXml("displaySettings.gridColor.green"	, xmlHelper.projectXML),
-				xmlHelper.GetIntFromXml("displaySettings.gridColor.blue"	, xmlHelper.projectXML)
-				);
+			xmlHelper.GetIntFromXml("displaySettings.gridColor.red", xmlHelper.projectXML),
+			xmlHelper.GetIntFromXml("displaySettings.gridColor.green", xmlHelper.projectXML),
+			xmlHelper.GetIntFromXml("displaySettings.gridColor.blue", xmlHelper.projectXML)
+		);
 		imageController.renderLabel.gridColor = gridColor;
 
-
-		this.controlPanel.showGridCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("displaySettings.showGrid"	, xmlHelper.projectXML) == 1 ? true: false);
-		imageController.renderLabel.showGrid = xmlHelper.GetIntFromXml("displaySettings.showGrid", xmlHelper.projectXML) == 1 ? true: false;
-
+		this.controlPanel.showGridCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("displaySettings.showGrid", xmlHelper.projectXML) == 1 ? true : false);
+		imageController.renderLabel.showGrid = xmlHelper.GetIntFromXml("displaySettings.showGrid", xmlHelper.projectXML) == 1 ? true : false;
 
 		imageController.pallette.excludePearls = xmlHelper.GetIntFromXml("beadsToExclude.pearls", xmlHelper.projectXML) == 1 ? ExcludePearls.TRUE : ExcludePearls.FALSE;
-		controlPanel.excludePearlsCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("beadsToExclude.pearls", xmlHelper.projectXML) == 1 ? true: false);
-
+		controlPanel.excludePearlsCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("beadsToExclude.pearls", xmlHelper.projectXML) == 1 ? true : false);
 
 		imageController.pallette.excludeTranslucents = xmlHelper.GetIntFromXml("beadsToExclude.translucents", xmlHelper.projectXML) == 1 ? ExcludeTranslucents.TRUE : ExcludeTranslucents.FALSE;
-		controlPanel.excludeTranslucentsCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("beadsToExclude.translucents", xmlHelper.projectXML) == 1 ? true: false);
+		controlPanel.excludeTranslucentsCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("beadsToExclude.translucents", xmlHelper.projectXML) == 1 ? true : false);
 
 		imageController.pallette.GetPalletteFromXml(System.getProperty("user.dir") + "\\pallettes\\" + controlPanel.customPalletteFiles[0][controlPanel.customPallette.getSelectedIndex()], xmlHelper);
 
-		imageController.pallette.uncheckedColorIndices = ArrayHelper.SplitStringToIntegerArray(xmlHelper.GetDataFromXml("beadsToExclude.uncheckedColorIndices"	, xmlHelper.projectXML));
+		imageController.pallette.uncheckedColorIndices = ArrayHelper.SplitStringToIntegerArray(xmlHelper.GetDataFromXml("beadsToExclude.uncheckedColorIndices", xmlHelper.projectXML));
 
-		//uncheck all colors that are listed in the "uncheckedColorIndices" project XML
+		// uncheck all colors that are listed in the "uncheckedColorIndices" project XML
 		for (int i = 0; i < imageController.pallette.perlerColorsRGB.length; i++) {
 			for (int j = 0; j < imageController.pallette.uncheckedColorIndices.length; j++) {
 				if (imageController.pallette.uncheckedColorIndices[j] == imageController.pallette.perlerColorsRGB[i][imageController.pallette.arrayIndex04_ColorIndex]) {
@@ -518,209 +488,178 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 
 		if (updateCurrentProjectFilePath) {
 			xmlHelper.AlterXML("currentProjectFilePath", myProjectFile.substring(0, myProjectFile.lastIndexOf(File.separator)), configFilePath);
-			
+
 			beadMaker.windowController.setTitle("--Bead Maker-- " + myProjectFile + "  --" + imageFile.substring(imageFile.lastIndexOf(File.separator) + 1) + "--");
 		}
-		//reload the XML into the variable
+		// reload the XML into the variable
 		xmlHelper.configXML = xmlHelper.GetXMLFromFile(configFilePath);
 
-
-		//set image to image value in xml
+		// set image to image value in xml
 		imageController.selectedColorIndex = -1;
 		imageController.pallette.selectedColorIndex = -1;
-		imageController.setOriginalCleanedImage(
-				xmlHelper.GetAbsoluteFilePathStringFromXml("imageFile", xmlHelper.projectXML)
-				);
+		imageController.setOriginalCleanedImage(xmlHelper.GetAbsoluteFilePathStringFromXml("imageFile", xmlHelper.projectXML));
 		if (GlobalConstants.pixelArtMultiPaletteMode == 1) {
 			imageController.loadColorMap(System.getProperty("user.dir") + "\\ColorMaps\\" + "default.png");
 		}
 		imageController.pallette.CreateButtons("beadBrandActionListener");
-		
+
 	}
 
-
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	// SaveProject: see http://www.mkyong.com/java/java-properties-file-examples/
-	//---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
 	public void SaveProject() {
 		SaveProject("");
 	}
 
 	public void SaveProject(String myProjectName) {
 		consoleHelper.PrintMessage("SaveProject");
-		
-		//if the current project is the default project, do not oeverwirte the file
+
+		// if the current project is the default project, do not oeverwirte the file
 		if (myProjectName.equals(defaultProjectFilePath) || myProjectName.equals("Untitled")) {
 			myProjectName = "";
 		}
 
-		try {
-			File projectFile = new File(myProjectName);
+		File projectFile = new File(myProjectName);
 
-			if (!projectFile.exists()) {
-				//-----------------------------------------------
-				//this block attempts to set the file chooser 
-				// to a Windows-style file chooser
-				// https://stackoverflow.com/questions/51022662/having-the-windows-ui-display-when-using-jfilechooser/51074520
-				//-----------------------------------------------
-				try {
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-						| UnsupportedLookAndFeelException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		if (!projectFile.exists()) {
+
+			File dataDir = new File(
+				xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML), "\\"
+			);
+			ExtensionFilter fileFilter = new ExtensionFilter(
+				perlerProjectFileDescription,
+				"*." + perlerProjectFileExtension
+			);
+
+			File selectedFile;
+
+			// stackoverflow.com/questions/39819319/windows-native-file-chooser-in-java
+			// this prevents "toolkit not initialized" error
+			new JFXPanel();
+			Platform.setImplicitExit(false);
+
+			SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(dataDir, fileFilter);
+			selectedFile = chooser.showSaveDialog();
+
+			if (selectedFile != null) {
+				myProjectName = selectedFile.toString();
+
+				if (!fileHelper.getExtension(myProjectName).equals(perlerProjectFileExtension)) {
+					myProjectName += "." + perlerProjectFileExtension;
 				}
-				//-----------------------------------------------
-				//-----------------------------------------------
-				JFileChooser chooser = new JFileChooser();
-				//File dataDir = new File(System.getProperty("user.dir"), "\\");
-				File dataDir = new File(xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML), "\\");
-				chooser.setSelectedFile(dataDir);
-				FileNameExtensionFilter fileFilter = new FileNameExtensionFilter(perlerProjectFileDescription, perlerProjectFileExtension);
-				chooser.setFileFilter(fileFilter);
-				int returnVal = chooser.showSaveDialog(null);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-					myProjectName = chooser.getSelectedFile().toString();
-
-					if (!fileHelper.getExtension(myProjectName).equals(perlerProjectFileExtension)) {
-						myProjectName += "." + perlerProjectFileExtension;
-					}
-					consoleHelper.PrintMessage("myProjectName = " + myProjectName);
-					File selectedFile = new File(myProjectName);
-					if (selectedFile.exists()) {
-						int dialogButton = JOptionPane.YES_NO_OPTION;
-						int dialogResult = JOptionPane.showConfirmDialog (null, "Overwrite Existing File?","Warning", dialogButton);
-						if (dialogResult == JOptionPane.NO_OPTION) {
-							return; //if the user says "no" to "overwrite existing file?", then bail out.
-						}
-					} else {
-						//create a new pbp file, using the default project as a source
+				consoleHelper.PrintMessage("myProjectName = " + myProjectName);
+				selectedFile = new File(myProjectName);
+				if (!selectedFile.exists()) {
+					try {
 						FileHelper.CopyFileUsingStream(new File(defaultProjectFilePath), selectedFile);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-
-					consoleHelper.PrintMessage("myProjectName EXTENSION = ***" + fileHelper.getExtension(myProjectName) + "***");
-
-					if (!fileHelper.getExtension(myProjectName).equals(perlerProjectFileExtension)) {
-						myProjectName += "." + perlerProjectFileExtension;
-						consoleHelper.PrintMessage("After extension check, myProjectName = " + myProjectName);
-					}
-
-					currentProjectName = myProjectName;
-					consoleHelper.PrintMessage("You chose to save this file: " + myProjectName);
-					
-				} else {
-					return; //bail out because the user did not select a file
 				}
-			}
-		} 
-		catch (IOException e) { /* TODO: error handling */ }
 
-		//determine which palletteIndices are unchecked
-		String myUncheckedIndices = "";
-		boolean isFirstUncheckedIndex = true;
+				consoleHelper.PrintMessage("myProjectName EXTENSION = ***" + fileHelper.getExtension(myProjectName) + "***");
 
-		for (int i = 0; i < imageController.pallette.currentPallette.length; i++) {
-			if (imageController.pallette.currentPallette[i][imageController.pallette.arrayIndex16_IsChecked] == 0) {
-				if (isFirstUncheckedIndex) {
-					myUncheckedIndices = Integer.toString(imageController.pallette.currentPallette[i][imageController.pallette.arrayIndex04_ColorIndex]);
-					isFirstUncheckedIndex = false;
-				} else {
-					myUncheckedIndices = String.join(",", myUncheckedIndices, Integer.toString(imageController.pallette.currentPallette[i][imageController.pallette.arrayIndex04_ColorIndex]));
+				if (!fileHelper.getExtension(myProjectName).equals(perlerProjectFileExtension)) {
+					myProjectName += "." + perlerProjectFileExtension;
+					consoleHelper.PrintMessage("After extension check, myProjectName = " + myProjectName);
 				}
+
+				currentProjectName = myProjectName;
+				consoleHelper.PrintMessage("You chose to save this file: " + myProjectName);
+
+			} else {
+				return; // bail out because the user did not select a file
 			}
 		}
 
-		String[][] xmlData = new String[30][2];		
+		String[][] xmlData = new String[30][2];
 
-		xmlData[ 0] = new String[] {"imageFile" 							,imageFile};
-		xmlData[ 1] = new String[] {"dialValues.red"						,Integer.toString(controlPanel.sliderRed		.getValue())};
-		xmlData[ 2] = new String[] {"dialValues.green"						,Integer.toString(controlPanel.sliderGreen		.getValue())};
-		xmlData[ 3] = new String[] {"dialValues.blue"						,Integer.toString(controlPanel.sliderBlue		.getValue())};
-		xmlData[ 4] = new String[] {"dialValues.brightness"					,Integer.toString(controlPanel.sliderBrightness	.getValue())};
-		xmlData[ 5] = new String[] {"dialValues.contrast"					,Integer.toString(controlPanel.sliderContrast	.getValue())};
-		xmlData[ 6] = new String[] {"dialValues.saturation"					,Integer.toString(controlPanel.sliderSaturation	.getValue())};
-		xmlData[ 7] = new String[] {"dialValues.ditherLevel"				,Integer.toString(controlPanel.sliderDither		.getValue())};
-		xmlData[ 8] = new String[] {"dialValues.sharpness"					,Integer.toString(controlPanel.sliderSharpness	.getValue())};
-		xmlData[ 9] = new String[] {"dialValues.imageScale"					,Integer.toString(controlPanel.sliderScale		.getValue())};
-		xmlData[10] = new String[] {"dialValues.zoom"						,Integer.toString(controlPanel.sliderZoom		.getValue())};
+		xmlData[0] = new String[] { "imageFile", imageFile };
+		xmlData[1] = new String[] { "dialValues.red", Integer.toString(controlPanel.sliderRed.getValue()) };
+		xmlData[2] = new String[] { "dialValues.green", Integer.toString(controlPanel.sliderGreen.getValue()) };
+		xmlData[3] = new String[] { "dialValues.blue", Integer.toString(controlPanel.sliderBlue.getValue()) };
+		xmlData[4] = new String[] { "dialValues.brightness",Integer.toString(controlPanel.sliderBrightness.getValue()) };
+		xmlData[5] = new String[] { "dialValues.contrast",Integer.toString(controlPanel.sliderContrast.getValue()) };
+		xmlData[6] = new String[] { "dialValues.saturation",Integer.toString(controlPanel.sliderSaturation.getValue()) };
+		xmlData[7] = new String[] { "dialValues.ditherLevel",Integer.toString(controlPanel.sliderDither.getValue()) };
+		xmlData[8] = new String[] { "dialValues.sharpness",Integer.toString(controlPanel.sliderSharpness.getValue()) };
+		xmlData[9] = new String[] { "dialValues.imageScale",Integer.toString(controlPanel.sliderScale.getValue()) };
+		xmlData[10] = new String[] { "dialValues.zoom", Integer.toString(controlPanel.sliderZoom.getValue()) };
+		xmlData[11] = new String[] { "brandsToUse.perler",Integer.toString(controlPanel.perlerCheckboxPanel.checkbox.isSelected() ? 1 : 0) };
+		xmlData[12] = new String[] { "brandsToUse.hama", Integer.toString(0) };
+		xmlData[13] = new String[] { "brandsToUse.artkalS",Integer.toString(controlPanel.artkalCheckboxPanel.checkbox.isSelected() ? 1 : 0) };
 
-		xmlData[11] = new String[] {"brandsToUse.perler"					,Integer.toString(controlPanel.perlerCheckboxPanel.checkbox.isSelected() ? 1 : 0)};
-		xmlData[12] = new String[] {"brandsToUse.hama"						,Integer.toString(0)};
-		xmlData[13] = new String[] {"brandsToUse.artkalS"					,Integer.toString(controlPanel.artkalCheckboxPanel.checkbox.isSelected() ? 1 : 0)};
+		xmlData[14] = new String[] { "beadsToExclude.translucents",Integer.toString(controlPanel.excludeTranslucentsCheckboxPanel.checkbox.isSelected() ? 1 : 0) };
+		xmlData[15] = new String[] { "beadsToExclude.pearls",Integer.toString(controlPanel.excludePearlsCheckboxPanel.checkbox.isSelected() ? 1 : 0) };
+		xmlData[16] = new String[] { "beadsToExclude.uncheckedColorIndices",imageController.pallette.getUncheckedIndices() };
 
-		xmlData[14] = new String[] {"beadsToExclude.translucents"			,Integer.toString(controlPanel.excludeTranslucentsCheckboxPanel	.checkbox.isSelected() ? 1 : 0)};
-		xmlData[15] = new String[] {"beadsToExclude.pearls"					,Integer.toString(controlPanel.excludePearlsCheckboxPanel		.checkbox.isSelected() ? 1 : 0)};
-		xmlData[16] = new String[] {"beadsToExclude.uncheckedColorIndices"	,myUncheckedIndices};
-
-		//xmlData[17] = new String[] {"displaySettings.selectedPallette"	,Integer.toString(controlPanel.customPallette.getSelectedIndex())};
-		xmlData[17] = new String[] {"displaySettings.selectedPallette"		,controlPanel.customPalletteFiles[0][controlPanel.customPallette.getSelectedIndex()]};
-		xmlData[18] = new String[] {"displaySettings.showColorCodes"		,Integer.toString(0)};
-
-		xmlData[19] = new String[] {"displaySettings.showPixelsAsBeads"		,Integer.toString(controlPanel.renderPixelsAsBeadsCheckboxPanel	.checkbox.isSelected() ? 1 : 0)};
-		xmlData[20] = new String[] {"displaySettings.pegboardMode"			,Integer.toString(controlPanel.pegboardSize.getSelectedIndex())};
-		xmlData[21] = new String[] {"displaySettings.showGrid"				,Integer.toString(controlPanel.showGridCheckboxPanel			.checkbox.isSelected() ? 1 : 0)};
-		xmlData[22] = new String[] {"displaySettings.ditherMethod"			,Integer.toString(controlPanel.ditherMethod.getSelectedIndex())};
-		xmlData[23] = new String[] {"displaySettings.backgroundColor.red"	,Integer.toString(imageController.renderScrollPanel.getViewport().getBackground().getRed())};
-		xmlData[24] = new String[] {"displaySettings.backgroundColor.green"	,Integer.toString(imageController.renderScrollPanel.getViewport().getBackground().getGreen())};
-		xmlData[25] = new String[] {"displaySettings.backgroundColor.blue"	,Integer.toString(imageController.renderScrollPanel.getViewport().getBackground().getBlue())};
-		xmlData[26] = new String[] {"displaySettings.gridColor.red"			,Integer.toString(imageController.renderLabel.gridColor.getRed())};
-		xmlData[27] = new String[] {"displaySettings.gridColor.green"		,Integer.toString(imageController.renderLabel.gridColor.getGreen())};
-		xmlData[28] = new String[] {"displaySettings.gridColor.blue"		,Integer.toString(imageController.renderLabel.gridColor.getBlue())};
-		xmlData[29] = new String[] {"displaySettings.flipImage"				,Integer.toString(controlPanel.flipImageCheckboxPanel			.checkbox.isSelected() ? 1 : 0)};
+		// xmlData[17] = new String[] {"displaySettings.selectedPallette",Integer.toString(controlPanel.customPallette.getSelectedIndex())};
+		xmlData[17] = new String[] { "displaySettings.selectedPallette",controlPanel.customPalletteFiles[0][controlPanel.customPallette.getSelectedIndex()] };
+		xmlData[18] = new String[] { "displaySettings.showColorCodes", Integer.toString(0) };
+		xmlData[19] = new String[] { "displaySettings.showPixelsAsBeads",Integer.toString(controlPanel.renderPixelsAsBeadsCheckboxPanel.checkbox.isSelected() ? 1 : 0) };
+		xmlData[20] = new String[] { "displaySettings.pegboardMode",Integer.toString(controlPanel.pegboardSize.getSelectedIndex()) };
+		xmlData[21] = new String[] { "displaySettings.showGrid",Integer.toString(controlPanel.showGridCheckboxPanel.checkbox.isSelected() ? 1 : 0) };
+		xmlData[22] = new String[] { "displaySettings.ditherMethod",Integer.toString(controlPanel.ditherMethod.getSelectedIndex()) };
+		xmlData[23] = new String[] { "displaySettings.backgroundColor.red",Integer.toString(imageController.renderScrollPanel.getViewport().getBackground().getRed()) };
+		xmlData[24] = new String[] { "displaySettings.backgroundColor.green",Integer.toString(imageController.renderScrollPanel.getViewport().getBackground().getGreen()) };
+		xmlData[25] = new String[] { "displaySettings.backgroundColor.blue",Integer.toString(imageController.renderScrollPanel.getViewport().getBackground().getBlue()) };
+		xmlData[26] = new String[] { "displaySettings.gridColor.red",Integer.toString(imageController.renderLabel.gridColor.getRed()) };
+		xmlData[27] = new String[] { "displaySettings.gridColor.green",Integer.toString(imageController.renderLabel.gridColor.getGreen()) };
+		xmlData[28] = new String[] { "displaySettings.gridColor.blue",Integer.toString(imageController.renderLabel.gridColor.getBlue()) };
+		xmlData[29] = new String[] { "displaySettings.flipImage",Integer.toString(controlPanel.flipImageCheckboxPanel.checkbox.isSelected() ? 1 : 0) };
 
 		xmlHelper.AlterXML(xmlData, myProjectName);
 
 		xmlHelper.AlterXML("currentProjectFilePath", myProjectName.substring(0, myProjectName.lastIndexOf(File.separator)), configFilePath);
-		//reload the XML into the variable
+		// reload the XML into the variable
 		xmlHelper.configXML = xmlHelper.GetXMLFromFile(configFilePath);
-		
-		beadMaker.windowController.setTitle("--Bead Maker-- " + myProjectName + "  --" + xmlData[0][1].substring(xmlData[0][1].lastIndexOf(File.separator) + 1) + "--");
-	}
 
+		beadMaker.windowController.setTitle("--Pixel Perfect-- " + myProjectName + "  --" + xmlData[0][1].substring(xmlData[0][1].lastIndexOf(File.separator) + 1) + "--");
+	}
 
 	@Override
 	public void onInterObjectCommunicator_CommunicateEvent(Object o) {
 		if (o instanceof KeyEvent) {
 			KeyEvent e = ((KeyEvent) o);
-			//https://stackoverflow.com/questions/5970765/java-detect-ctrlx-key-combination-on-a-jtree
+			// https://stackoverflow.com/questions/5970765/java-detect-ctrlx-key-combination-on-a-jtree
 			if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() ^ KeyEvent.CTRL_MASK) == 0)) {
-				//ConsoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in MenuBar" + e.getKeyCode());
-				OpenProject();				
-	        }
+				// ConsoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in
+				// MenuBar" + e.getKeyCode());
+				OpenProject();
+			}
 			if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() ^ KeyEvent.CTRL_MASK) == 0)) {
 				consoleHelper.PrintMessage("fired a keyPressed event from oCommInterface in MenuBar" + e.getKeyCode());
 				expertMode.setState(!expertMode.getState());
-				SetExpertMode();				
-	        }
+				SetExpertMode();
+			}
 			if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() ^ KeyEvent.CTRL_MASK) == 0)) {
 				SaveProject(currentProjectName);
-	        }
+			}
 			if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() ^ (KeyEvent.CTRL_MASK + KeyEvent.SHIFT_MASK)) == 0)) {
 				SaveProject();
-	        }
-			if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() ^ KeyEvent.CTRL_MASK) == 0)) {				expertMode.setState(!expertMode.getState());
+			}
+			if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() ^ KeyEvent.CTRL_MASK) == 0)) {
+				expertMode.setState(!expertMode.getState());
 				SelectImage();
-	        }
+			}
 			if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() ^ KeyEvent.CTRL_MASK) == 0)) {
 				SavePattern(false);
-	        }
+			}
 			if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() ^ (KeyEvent.CTRL_MASK + KeyEvent.SHIFT_MASK)) == 0)) {
 				SavePattern(true);
-	        }
+			}
 			if ((e.getKeyCode() == KeyEvent.VK_X) && ((e.getModifiers() ^ (KeyEvent.CTRL_MASK + KeyEvent.SHIFT_MASK)) == 0)) {
 				System.exit(0);
-	        }
-		}		
+			}
+		}
 	}
-
 
 	@Override
 	public void onInterObjectCommunicator_CommunicateEvent(String descriptor, Object o) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	@Override
 	public Object onInterObjectCommunicator_RequestEvent(Object o) {
@@ -728,12 +667,10 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		return null;
 	}
 
-
 	@Override
 	public String getObjectName() {
 		return objectName;
 	}
-
 
 	@Override
 	public Object onInterObjectCommunicator_RequestEvent(String descriptor, Object o) {

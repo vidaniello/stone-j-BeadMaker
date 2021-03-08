@@ -480,6 +480,30 @@ public class Palette implements InterObjectCommunicatorEventListener {
 			palletteSubPanels.get(i).paletteButton.setForeground(ColorHelper.GetTextColorForBGColor(palletteSubPanels.get(i).paletteButton.bgColor));
 		}
 	}
+	
+	
+	//---------------------------------------------------------------------------
+	// getUncheckedIndices
+	//---------------------------------------------------------------------------
+	public String getUncheckedIndices() {
+		
+		//determine which palletteIndices are unchecked
+		String myUncheckedIndices = "";
+		boolean isFirstUncheckedIndex = true;
+		
+		for (int i = 0; i < currentPallette.length; i++) {
+			if (currentPallette[i][arrayIndex16_IsChecked] == 0) {
+				if (isFirstUncheckedIndex) {
+					myUncheckedIndices = Integer.toString(currentPallette[i][arrayIndex04_ColorIndex]);
+					isFirstUncheckedIndex = false;
+				} else {
+					myUncheckedIndices = String.join(",", myUncheckedIndices, Integer.toString(currentPallette[i][arrayIndex04_ColorIndex]));
+				}
+			}
+		}
+		
+		return myUncheckedIndices;
+	}
 
 
 	@Override

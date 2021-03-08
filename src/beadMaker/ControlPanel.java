@@ -49,27 +49,27 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
 	public ControlLabel labelScale;
 	public ControlLabel labelZoom;
 
-	public static BMSlider sliderRed = null;
-	public static BMSlider sliderGreen = null;
-	public static BMSlider sliderBlue = null;
-	public static BMSlider sliderBrightness = null;
-	public static BMSlider sliderContrast = null;
-	public static BMSlider sliderSaturation = null;
-	public static BMSlider sliderDither = null;
-	public static BMSlider sliderSharpness = null;
-	public static BMSlider sliderScale = null;
-	public static BMSlider sliderZoom = null;
+	public BMSlider sliderRed = null;
+	public BMSlider sliderGreen = null;
+	public BMSlider sliderBlue = null;
+	public BMSlider sliderBrightness = null;
+	public BMSlider sliderContrast = null;
+	public BMSlider sliderSaturation = null;
+	public BMSlider sliderDither = null;
+	public BMSlider sliderSharpness = null;
+	public BMSlider sliderScale = null;
+	public BMSlider sliderZoom = null;
 	
-	public static BMTextField redValue;
-	public static BMTextField greenValue;	
-	public static BMTextField blueValue;
-	public static BMTextField brightnessValue;
-	public static BMTextField contrastValue;
-	public static BMTextField saturationValue;
-	public static BMTextField ditherValue;
-	public static BMTextField sharpnessValue;
-	public static BMTextField scaleValue;
-	public static BMTextField zoomValue;
+	public BMTextField redValue;
+	public BMTextField greenValue;	
+	public BMTextField blueValue;
+	public BMTextField brightnessValue;
+	public BMTextField contrastValue;
+	public BMTextField saturationValue;
+	public BMTextField ditherValue;
+	public BMTextField sharpnessValue;
+	public BMTextField scaleValue;
+	public BMTextField zoomValue;
 	
 	public ControlPanelSubPanel redPanel;
 	public ControlPanelSubPanel greenPanel;
@@ -88,7 +88,7 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
 	public JLabel pegboardSizeLabel;
 	public JLabel lutLabel;
 	
-	public static HoverLabel hoveredPixelColor;
+	public HoverLabel hoveredPixelColor;
 	public JPanel hoverPanel;
 	
 	ControlPanelComboPanel ditherComboPanel;
@@ -115,10 +115,10 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
 	public CheckBoxPanel flipImageCheckboxPanel;
 	
 	
-	public static JComboBox<String> ditherMethod;
-	public static JComboBox<String> customPallette;
-	public static JComboBox<String> pegboardSize;
-	public static JComboBox<String> lutSelector;
+	public JComboBox<String> ditherMethod;
+	public JComboBox<String> customPallette;
+	public JComboBox<String> pegboardSize;
+	public JComboBox<String> lutSelector;
 	
 	public final String[][] customPalletteFiles;
 	//public final String[] customPalletteNames;
