@@ -18,9 +18,6 @@ import core.DialogBoxHelper;
 import core.FileHelper;
 import core.ProcessingHelper;
 import core.SynchronousJFXFileChooser;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 public class PDFHelper {
 	
@@ -90,26 +87,18 @@ ConsoleHelper consoleHelper = new ConsoleHelper();
 				imageController.setPegboardMode(ImageController.PegboardMode.PERLERMINI_FORPDFPRINTING);
 			}
 		}
-
-		//-----------------------------------------------
-		// NEW BLOCK
-		//-----------------------------------------------
 		
 		File dataDir = new File(System.getProperty("user.dir"), "\\");
-		ExtensionFilter fileFilter = new ExtensionFilter("Portable Document Format (*.pdf)", "*.pdf");
 		
 		File selectedFile;
 		
-		//stackoverflow.com/questions/39819319/windows-native-file-chooser-in-java			
-		//this prevents "toolkit not initialized" error
-		new JFXPanel();
-        Platform.setImplicitExit(false);
-        
+		//File initialDirectory, String extensionFilterDescription, String[] extensionFilterFiletypes
         SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
         	dataDir,
-        	fileFilter
+        	"Portable Document Format (*.pdf)",
+        	new String[] {"*.pdf"}
         );
-        selectedFile = chooser.showSaveDialog();	            
+        selectedFile = chooser.showSaveDialog();
         
         if (selectedFile != null) {
         	SavePatternPDF__myPDFFile = selectedFile.toString(); 

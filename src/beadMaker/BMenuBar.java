@@ -24,9 +24,6 @@ import core.ConsoleHelper.MessageLevel;
 import core.FileHelper;
 import core.InterObjectCommunicatorEventListener;
 import core.SynchronousJFXFileChooser;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.stage.FileChooser.ExtensionFilter;
 import beadMaker.HelperClasses.PDFHelper;
 import beadMaker.HelperClasses.XMLWorker;
 import java.io.IOException;
@@ -527,19 +524,14 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 			File dataDir = new File(
 				xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML), "\\"
 			);
-			ExtensionFilter fileFilter = new ExtensionFilter(
-				perlerProjectFileDescription,
-				"*." + perlerProjectFileExtension
-			);
 
 			File selectedFile;
 
-			// stackoverflow.com/questions/39819319/windows-native-file-chooser-in-java
-			// this prevents "toolkit not initialized" error
-			new JFXPanel();
-			Platform.setImplicitExit(false);
-
-			SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(dataDir, fileFilter);
+			SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(
+				dataDir,
+				perlerProjectFileDescription,
+				new String[] {"*." + perlerProjectFileExtension}
+			);
 			selectedFile = chooser.showSaveDialog();
 
 			if (selectedFile != null) {

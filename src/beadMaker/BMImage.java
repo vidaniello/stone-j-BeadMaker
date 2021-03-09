@@ -12,9 +12,6 @@ import core.ConsoleHelper;
 import core.FileHelper;
 import core.MathHelper;
 import core.SynchronousJFXFileChooser;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 public class BMImage extends PImage {
 	
@@ -202,18 +199,13 @@ public class BMImage extends PImage {
 		consoleHelper.PrintMessage("SavePNG");
 
 		File dataDir = new File(System.getProperty("user.dir"), "\\");
-		ExtensionFilter fileFilter = new ExtensionFilter("Portable Network Graphics (*.png)", "*.png");
 		
 		File selectedFile;
 		
-		//stackoverflow.com/questions/39819319/windows-native-file-chooser-in-java			
-		//this prevents "toolkit not initialized" error
-		new JFXPanel();
-        Platform.setImplicitExit(false);
-        
-        SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
+		SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
         	dataDir,
-        	fileFilter
+        	"Portable Network Graphics (*.png)",
+        	new String[] {"*.png"}
         );
         selectedFile = chooser.showSaveDialog();	            
         
@@ -246,18 +238,13 @@ public class BMImage extends PImage {
 		consoleHelper.PrintMessage("SaveSCAD");
 
 		File dataDir = new File(System.getProperty("user.dir"), "\\");
-		ExtensionFilter fileFilter = new ExtensionFilter("OpenSCAD Designs (*.scad)", "*.scad");
 		
 		File selectedFile;
 		
-		//stackoverflow.com/questions/39819319/windows-native-file-chooser-in-java			
-		//this prevents "toolkit not initialized" error
-		new JFXPanel();
-        Platform.setImplicitExit(false);
-        
-        SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
+		SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
         	dataDir,
-        	fileFilter
+        	"OpenSCAD Designs (*.scad)",
+        	new String[] {"*.scad"}
         );
         selectedFile = chooser.showSaveDialog();	            
         
