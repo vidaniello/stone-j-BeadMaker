@@ -4,7 +4,7 @@ public class DitherMatrix {
 
 	//these matrices were taken from this fantastic rundown on dithering:
 	//http://www.tannerhelland.com/4660/dithering-eleven-algorithms-source-code/
-	public static int[][][] ditherMatrix =  //new int[8][16][4];
+	public final int[][][] ditherMatrix =  //new int[8][16][4];
 		{
 		//FLOYD_STEINBERG
 		{

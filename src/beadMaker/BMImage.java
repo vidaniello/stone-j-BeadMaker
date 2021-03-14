@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
+import javax.swing.JFileChooser;
+
 import core.ColorHelper;
 import processing.core.PImage;
 import core.ConsoleHelper;
@@ -15,8 +17,8 @@ import core.SynchronousJFXFileChooser;
 
 public class BMImage extends PImage {
 	
-	ConsoleHelper consoleHelper = new ConsoleHelper();
-	FileHelper fileHelper = new FileHelper();
+	ConsoleHelper consoleHelper;
+	FileHelper fileHelper;
 
 	static final int upscalerForPDFPrinting = 30;
 
@@ -69,7 +71,7 @@ public class BMImage extends PImage {
 	DitherArrayIndex2_Numerator 	= 2,
 	DitherArrayIndex3_Denominator 	= 3;
 
-	DitherMatrix ditherMatrix = new DitherMatrix();
+	DitherMatrix ditherMatrix;
 	
 	public int totalBeadsHightlighted = 0;
 	
@@ -77,27 +79,45 @@ public class BMImage extends PImage {
 	Color lutColor; //holds the rgb color derived from the LUT transformation
 	
 	BMImage colorMap;
+	
+	boolean useAppData;
+	String appDataFolderName;
 
 	//------------------------------------------------------------
 	//CONSTRUCTOR
 	//------------------------------------------------------------
-	public BMImage(int width, int height) {
+	public BMImage(int width, int height, boolean myUseAppData, String myAppDataFolderName) {
 		super(width, height);
 		//have to do this because the PImage constructor sets format to RGB, which eliminates transparency
 		this.format = ARGB;
+		this.useAppData = myUseAppData;
+		this.appDataFolderName = myAppDataFolderName;
+		consoleHelper = new ConsoleHelper();
+		fileHelper = new FileHelper(useAppData, appDataFolderName);
+		ditherMatrix = new DitherMatrix();
 	}
 
-	public BMImage(Image img) {
+	public BMImage(Image img, boolean myUseAppData, String myAppDataFolderName) {
 		super(img);
 		//have to do this because the PImage constructor sets format to RGB, which eliminates transparency
 		this.format = ARGB;
+		this.useAppData = myUseAppData;
+		this.appDataFolderName = myAppDataFolderName;
+		consoleHelper = new ConsoleHelper();
+		fileHelper = new FileHelper(useAppData, appDataFolderName);
+		ditherMatrix = new DitherMatrix();
 	}
 	
-	public BMImage(int width, int height, BMImage colorMap) {
+	public BMImage(int width, int height, BMImage colorMap, boolean myUseAppData, String myAppDataFolderName) {
 		super(width, height);
 		//have to do this because the PImage constructor sets format to RGB, which eliminates transparency
 		this.format = ARGB;
-		this.colorMap = colorMap;
+		this.useAppData = myUseAppData;
+		this.appDataFolderName = myAppDataFolderName;
+		consoleHelper = new ConsoleHelper();
+		fileHelper = new FileHelper(useAppData, appDataFolderName);
+		ditherMatrix = new DitherMatrix();
+		this.colorMap = colorMap;		
 		MapColors();
 	}
 
@@ -106,7 +126,7 @@ public class BMImage extends PImage {
 	//---------------------------------------------------------------------------
 	@Override
 	public synchronized BMImage get() {
-		return new BMImage((Image)super.get().getNative());
+		return new BMImage((Image)super.get().getNative(), useAppData, appDataFolderName);
 	}
 
 	//---------------------------------------------------------------------------
@@ -114,7 +134,7 @@ public class BMImage extends PImage {
 	//---------------------------------------------------------------------------
 	@Override
 	public synchronized BMImage get(int x, int y, int w, int h) {
-		return new BMImage((Image)super.get(x, y, w, h).getNative());
+		return new BMImage((Image)super.get(x, y, w, h).getNative(), useAppData, appDataFolderName);
 	}
 	
 	
@@ -187,7 +207,7 @@ public class BMImage extends PImage {
 	//---------------------------------------------------------------------------
 	// GetTileCountForImage
 	//---------------------------------------------------------------------------
-	public synchronized static int GetTileCountForImage(BMImage myImage, RenderLabel renderLabel) {
+	public synchronized int GetTileCountForImage(BMImage myImage, RenderLabel renderLabel) {
 		return (int)(Math.ceil((float)myImage.width / renderLabel.pegboardPegsWide) * Math.ceil((float)myImage.height / renderLabel.pegboardPegsHigh));
 	}
 
@@ -198,7 +218,17 @@ public class BMImage extends PImage {
 	void SavePNG() {
 		consoleHelper.PrintMessage("SavePNG");
 
-		File dataDir = new File(System.getProperty("user.dir"), "\\");
+		File dataDir;		
+		
+		//if (useAppData) {
+		//	dataDir = new File(System.getenv("APPDATA") + File.separator + appDataFolderName, File.separator);
+		//} else {
+		//	dataDir = new File(System.getProperty("user.dir"), File.separator);
+		//}	
+		
+		//returns "my documents" directory
+		//https://stackoverflow.com/questions/9677692/getting-my-documents-path-in-java
+		dataDir = new JFileChooser().getFileSystemView().getDefaultDirectory();
 		
 		File selectedFile;
 		
@@ -237,7 +267,13 @@ public class BMImage extends PImage {
 	void SaveSCAD() {
 		consoleHelper.PrintMessage("SaveSCAD");
 
-		File dataDir = new File(System.getProperty("user.dir"), "\\");
+		File dataDir;		
+		
+		if (useAppData) {
+			dataDir = new File(System.getenv("APPDATA") + File.separator + appDataFolderName, File.separator);
+		} else {
+			dataDir = new File(System.getProperty("user.dir"), File.separator);
+		}
 		
 		File selectedFile;
 		

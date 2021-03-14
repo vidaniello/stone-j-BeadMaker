@@ -19,7 +19,7 @@ import core.StringHelper;
 public class BeadMaker implements InterObjectCommunicatorEventListener
 {	
 	/*
-	 TODOO:
+	 TODO:
 	 ------------------------------------------------------------------------------------------------------
 	 ------------- 
 	 BUGS:
@@ -39,6 +39,9 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 	
 	//For InterObjectCommunicator identification
 	private String objectName = "BEAD_MAKER";
+	
+	private final boolean useAppData = true;
+	private final String appDataFolderName = "Nostalgic Pixels Pixel Perfect";
 	
 	public ImageController imageController;
 	public Palette pallette;
@@ -69,18 +72,18 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 	//------------------------------------------------------------
 	public BeadMaker() throws Exception
 	{
-		exceptionLogger = new ExceptionLogger();
+		exceptionLogger = new ExceptionLogger(useAppData, appDataFolderName);
 		
 		oComm = new InterObjectCommunicator();
 		oComm.setInterObjectCommunicatorEventListener(this);
 		
-		windowController = new WindowController("Pixel Perfect", oComm);	
+		windowController = new WindowController("Pixel Perfect", oComm, useAppData, appDataFolderName);	
 		
-		xmlWorker = new XMLWorker();
+		xmlWorker = new XMLWorker(useAppData, appDataFolderName);
 				
-		pallette = new Palette(xmlWorker.GetAbsoluteFilePathStringFromXml("defaultPallette", xmlWorker.configXML), xmlWorker, oComm);
+		pallette = new Palette(xmlWorker.GetAbsoluteFilePathStringFromXml("defaultPallette", xmlWorker.configXML, useAppData, appDataFolderName), xmlWorker, oComm);
 		
-		imageController = new ImageController(this, pallette, windowController, oComm);
+		imageController = new ImageController(this, pallette, windowController, oComm, useAppData, appDataFolderName);
 		
 		showAllColorsButtonPanel = new ShowAllColorsButtonPanel("<html>Show All <u>C</u>olors</html>", oComm);
 		
@@ -118,7 +121,7 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 		PalletteScrollPane palletteScrollPane = new PalletteScrollPane(pallette.pallettePanel);
 		palletteSuperPanel.add(palletteScrollPane);
 			
-		controlPanel = new ControlPanel(imageController, pallette, xmlWorker, oComm);
+		controlPanel = new ControlPanel(imageController, pallette, xmlWorker, oComm, useAppData, appDataFolderName);
 		if (GlobalConstants.applyLUT == 1) {
 			controlPanel.setPreferredSize(new Dimension(260,1038));
 		} else {
@@ -153,8 +156,8 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 		//windowController.add(controlPanelScrollPane, BorderLayout.LINE_END);
 		windowController.add(controlPanelSuperPanel, BorderLayout.LINE_END);
 		
-		bMenuBar = new BMenuBar(xmlWorker.configXML, xmlWorker, imageController, controlPanel, this, oComm);		
-		bMenuBar.LoadProject(xmlWorker.GetAbsoluteFilePathStringFromXml("defaultProjectFilePath", xmlWorker.configXML), false);
+		bMenuBar = new BMenuBar(xmlWorker.configXML, xmlWorker, imageController, controlPanel, this, oComm, useAppData, appDataFolderName);		
+		bMenuBar.LoadProject(xmlWorker.GetAbsoluteFilePathStringFromXml("defaultProjectFilePath", xmlWorker.configXML, useAppData, appDataFolderName), false);
 		
 		windowController.setMenuBar(bMenuBar);
 		

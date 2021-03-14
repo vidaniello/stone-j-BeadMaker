@@ -31,33 +31,17 @@ import java.io.IOException;
 public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventListener {
 
 	// For InterObjectCommunicator identification
-	private String objectName = "MENU_BAR";
+	private final String objectName = "MENU_BAR";
 
-	ConsoleHelper consoleHelper = new ConsoleHelper();
-	FileHelper fileHelper = new FileHelper();
+	ConsoleHelper consoleHelper;
+	FileHelper fileHelper;
 
 	// private int customPalletteIndex = 0;
 
-	String imageFileDescription = "All Supported Image Types (*.png, *.jpg, *.tga, *.gif)";
-	String[] imageFileExtensions = { "png", "jpg", "tga", "gif" };
+	final String imageFileDescription = "All Supported Image Types (*.png, *.jpg, *.tga, *.gif)";
+	final String[] imageFileExtensions = { "png", "jpg", "tga", "gif" };
 
-//	enum ShowPixelsAsBeads {
-//		OFF,
-//		ON;
-//
-//		private static final ShowPixelsAsBeads[] values = values(); // to avoid recreating array
-//
-//		public ShowPixelsAsBeads Toggle() {
-//			switch(this) {
-//			case ON: return OFF;
-//			case OFF: return ON;
-//			}
-//			return null;
-//		}
-//	}
-//	ShowPixelsAsBeads showPixelsAsBeads = ShowPixelsAsBeads.OFF;
-
-	static final String
+	final String
 		youtubeURL = "https://youtu.be/x_SNjAIZV1c", // "https://youtu.be/0gvja6lzhSw",
 		perlerProjectFileDescription = "Perler Bead Project (*.pbp)", perlerProjectFileExtension = "pbp",
 		configFilePath = "config\\_default_config.xml";
@@ -90,38 +74,67 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	public BeadMaker beadMaker;
 
 	private XMLWorker xmlHelper;
+	private XML[] configXML;
 
 	public ControlPanel controlPanel;
 	InterObjectCommunicator oComm;
+	
+	private boolean useAppData;
+	private String appDataFolderName;
 
 	// CONSTRUCTOR
-	public BMenuBar(XML[] configXML, XMLWorker myXMLHelper, ImageController myImageController, ControlPanel myControlPanel, BeadMaker myBeadMaker, InterObjectCommunicator myOComm) throws Exception {
+	public BMenuBar(
+		XML[] myConfigXML,
+		XMLWorker myXMLHelper,
+		ImageController myImageController,
+		ControlPanel myControlPanel,
+		BeadMaker myBeadMaker,
+		InterObjectCommunicator myOComm,
+		boolean myUseAppData,
+		String myAppDataFolderName
+	) throws Exception {
 		super();
 		oComm = myOComm;
+		this.beadMaker = myBeadMaker;
+		this.imageController = myImageController;
+		this.xmlHelper = myXMLHelper;
+		this.controlPanel = myControlPanel;
+		this.configXML = myConfigXML;
+		this.useAppData = myUseAppData;
+		this.appDataFolderName = myAppDataFolderName;
+		init();
+	}
+	
+	private void init() {
+		consoleHelper = new ConsoleHelper();
+		fileHelper = new FileHelper(useAppData, appDataFolderName);
+		
 		oComm.setInterObjectCommunicatorEventListener(this);
 		// ((MenuComponent)this).getAccessibleContext().firePropertyChange(arg0, arg1,
 		// arg2);
 		// awtMenu = new AccessibleAWTMenuBar();
 		// this.AccessibleAWTMenu.
 		// setForeground
-		this.beadMaker = myBeadMaker;
-		this.imageController = myImageController;
-		this.xmlHelper = myXMLHelper;
-		this.controlPanel = myControlPanel;
-		this.defaultProjectFilePath = xmlHelper.GetAbsoluteFilePathStringFromXml("defaultProjectFilePath", xmlHelper.configXML);
+		
+		this.defaultProjectFilePath = xmlHelper.GetAbsoluteFilePathStringFromXml("defaultProjectFilePath", xmlHelper.configXML, useAppData, appDataFolderName);
 
 		expertMode.setState(xmlHelper.GetIntFromXml("expertMode", xmlHelper.configXML) == 1 ? true : false);
 
 		consoleHelper.PrintMessage("$$$$$$$$$$$$$$$$HOLY SCHNIKES$$$$$$$$$$$$$$$$$$", MessageLevel.MESSAGE);
 
 		// populate images submenu
-		File myImagePath = new File(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", configXML));
+		File myImagePath = new File(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", configXML, useAppData, appDataFolderName));
 		if (myImagePath.isDirectory()) {
 			consoleHelper.PrintMessage(myImagePath.toString());
-			PopulateImageMenu(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", configXML));
+			PopulateImageMenu(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", configXML, useAppData, appDataFolderName));
 		} else {
-			consoleHelper.PrintMessage(System.getProperty("user.dir") + File.separator + "images");
-			PopulateImageMenu(System.getProperty("user.dir") + File.separator + "images");
+			if (useAppData) {
+				consoleHelper.PrintMessage(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "images");
+				PopulateImageMenu(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "images");
+			} else {
+				consoleHelper.PrintMessage(System.getProperty("user.dir") + File.separator + "images");
+				PopulateImageMenu(System.getProperty("user.dir") + File.separator + "images");
+			}
 		}
 
 		// construct the menu
@@ -213,14 +226,13 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 				OpenYouTubeVideo();
 			}
 		});
-
 	}
 
 	// ---------------------------------------------------------------------------
 	// SavePattern
 	// ---------------------------------------------------------------------------
 	void SavePattern(boolean fullColorPDFPrinting) {
-		PDFHelper pdfHelper = new PDFHelper(beadMaker.windowController, imageController);
+		PDFHelper pdfHelper = new PDFHelper(beadMaker.windowController, imageController, useAppData, appDataFolderName);
 		pdfHelper.SavePatternPDF(fullColorPDFPrinting);
 	}
 
@@ -229,19 +241,24 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	// ---------------------------------------------------------------------------
 	void SelectImage() {
 
-		File myImagePath = new File(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", xmlHelper.configXML));
+		String imageToLoad;
+		File myImagePath = new File(xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", xmlHelper.configXML, useAppData, appDataFolderName));
+		
 		if (myImagePath.isDirectory()) {
 			consoleHelper.PrintMessage(myImagePath.toString());
-			String imageToLoad = fileHelper.GetFilenameFromFileChooser(imageFileExtensions, imageFileDescription, xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", xmlHelper.configXML));
+			imageToLoad = fileHelper.GetFilenameFromFileChooser(imageFileExtensions, imageFileDescription, xmlHelper.GetAbsoluteFilePathStringFromXml("currentImagePath", xmlHelper.configXML, useAppData, appDataFolderName));
 			if (imageToLoad != null) {
 				LoadImage(imageToLoad, true);
 			}
 		} else {
-			// PopulateImageMenu(sketchPath("") + "images");
-			consoleHelper.PrintMessage(System.getProperty("user.dir") + File.separator + "images");
-			// PopulateImageMenu(System.getProperty("user.dir") + File.separator +
-			// "images");
-			String imageToLoad = fileHelper.GetFilenameFromFileChooser(imageFileExtensions, imageFileDescription, System.getProperty("user.dir") + File.separator + "images");
+			if (useAppData) {
+				consoleHelper.PrintMessage(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "images");
+				imageToLoad = fileHelper.GetFilenameFromFileChooser(imageFileExtensions, imageFileDescription, System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "images");
+			} else {
+				consoleHelper.PrintMessage(System.getProperty("user.dir") + File.separator + "images");
+				imageToLoad = fileHelper.GetFilenameFromFileChooser(imageFileExtensions, imageFileDescription, System.getProperty("user.dir") + File.separator + "images");
+			}
+			
 			if (imageToLoad != null) {
 				LoadImage(imageToLoad, true);
 			}
@@ -253,7 +270,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	// ---------------------------------------------------------------------------
 	void SetExpertMode() {
 		controlPanel.setExpertMode(expertMode.getState());
-		xmlHelper.AlterXML("expertMode", Integer.toString(expertMode.getState() ? 1 : 0), configFilePath);
+		xmlHelper.AlterXML("expertMode", Integer.toString(expertMode.getState() ? 1 : 0), configFilePath, useAppData, appDataFolderName);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -271,7 +288,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		if (updateImagePath) {
 			String myImagePath = myImageFilename.substring(0, myImageFilename.lastIndexOf(File.separator));
 
-			xmlHelper.AlterXML("currentImagePath", myImagePath, configFilePath);
+			xmlHelper.AlterXML("currentImagePath", myImagePath, configFilePath, useAppData, appDataFolderName);
 			// reload the XML into the variable
 			xmlHelper.configXML = xmlHelper.GetXMLFromFile(configFilePath);
 
@@ -345,13 +362,13 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 	public void GetProjectFromFileChooser() {
 		consoleHelper.PrintMessage("GetProjectNameFromFileChooser");
 
-		String myChosenProjectFile = fileHelper.GetFilenameFromFileChooser(new String[] { perlerProjectFileExtension }, perlerProjectFileDescription, xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML));
+		String myChosenProjectFile = fileHelper.GetFilenameFromFileChooser(new String[] { perlerProjectFileExtension }, perlerProjectFileDescription, xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML, useAppData, appDataFolderName));
 
 		if (myChosenProjectFile != null && !myChosenProjectFile.isEmpty()) {
 
 			String myChosenProjectPath = myChosenProjectFile.substring(0, myChosenProjectFile.lastIndexOf(File.separator));
 
-			xmlHelper.AlterXML("currentProjectFilePath", myChosenProjectPath, configFilePath);
+			xmlHelper.AlterXML("currentProjectFilePath", myChosenProjectPath, configFilePath, useAppData, appDataFolderName);
 
 			LoadProject(myChosenProjectFile);
 		}
@@ -375,7 +392,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 
 		xmlHelper.projectXML = xmlHelper.GetXMLFromFile(myProjectFile);
 
-		imageFile = xmlHelper.GetAbsoluteFilePathStringFromXml("imageFile", xmlHelper.projectXML);
+		imageFile = xmlHelper.GetAbsoluteFilePathStringFromXml("imageFile", xmlHelper.projectXML, useAppData, appDataFolderName);
 
 		// set control dials to values in project xml
 		controlPanel.sliderRed.setValue(xmlHelper.GetIntFromXml("dialValues.red", xmlHelper.projectXML));
@@ -467,8 +484,12 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		imageController.pallette.excludeTranslucents = xmlHelper.GetIntFromXml("beadsToExclude.translucents", xmlHelper.projectXML) == 1 ? ExcludeTranslucents.TRUE : ExcludeTranslucents.FALSE;
 		controlPanel.excludeTranslucentsCheckboxPanel.checkbox.setSelected(xmlHelper.GetIntFromXml("beadsToExclude.translucents", xmlHelper.projectXML) == 1 ? true : false);
 
-		imageController.pallette.GetPalletteFromXml(System.getProperty("user.dir") + "\\pallettes\\" + controlPanel.customPalletteFiles[0][controlPanel.customPallette.getSelectedIndex()], xmlHelper);
-
+		if (useAppData) {
+			imageController.pallette.GetPalletteFromXml(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "pallettes" + File.separator + controlPanel.customPalletteFiles[0][controlPanel.customPallette.getSelectedIndex()], xmlHelper);
+		} else {
+			imageController.pallette.GetPalletteFromXml(System.getProperty("user.dir") + File.separator + "pallettes" + File.separator + controlPanel.customPalletteFiles[0][controlPanel.customPallette.getSelectedIndex()], xmlHelper);
+		}
+		
 		imageController.pallette.uncheckedColorIndices = ArrayHelper.SplitStringToIntegerArray(xmlHelper.GetDataFromXml("beadsToExclude.uncheckedColorIndices", xmlHelper.projectXML));
 
 		// uncheck all colors that are listed in the "uncheckedColorIndices" project XML
@@ -484,7 +505,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		imageController.pallette.GetPalletteWithFiltersApplied();
 
 		if (updateCurrentProjectFilePath) {
-			xmlHelper.AlterXML("currentProjectFilePath", myProjectFile.substring(0, myProjectFile.lastIndexOf(File.separator)), configFilePath);
+			xmlHelper.AlterXML("currentProjectFilePath", myProjectFile.substring(0, myProjectFile.lastIndexOf(File.separator)), configFilePath, useAppData, appDataFolderName);
 
 			beadMaker.windowController.setTitle("--Bead Maker-- " + myProjectFile + "  --" + imageFile.substring(imageFile.lastIndexOf(File.separator) + 1) + "--");
 		}
@@ -494,9 +515,13 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		// set image to image value in xml
 		imageController.selectedColorIndex = -1;
 		imageController.pallette.selectedColorIndex = -1;
-		imageController.setOriginalCleanedImage(xmlHelper.GetAbsoluteFilePathStringFromXml("imageFile", xmlHelper.projectXML));
+		imageController.setOriginalCleanedImage(xmlHelper.GetAbsoluteFilePathStringFromXml("imageFile", xmlHelper.projectXML, useAppData, appDataFolderName));
 		if (GlobalConstants.pixelArtMultiPaletteMode == 1) {
-			imageController.loadColorMap(System.getProperty("user.dir") + "\\ColorMaps\\" + "default.png");
+			if (useAppData) {
+				imageController.loadColorMap(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "ColorMaps" + File.separator + "default.png");
+			} else {
+				imageController.loadColorMap(System.getProperty("user.dir") + File.separator + "ColorMaps" + File.separator + "default.png");
+			}
 		}
 		imageController.pallette.CreateButtons("beadBrandActionListener");
 
@@ -522,7 +547,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		if (!projectFile.exists()) {
 
 			File dataDir = new File(
-				xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML), "\\"
+				xmlHelper.GetAbsoluteFilePathStringFromXml("currentProjectFilePath", xmlHelper.configXML, useAppData, appDataFolderName), File.separator
 			);
 
 			File selectedFile;
@@ -601,9 +626,9 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		xmlData[28] = new String[] { "displaySettings.gridColor.blue",Integer.toString(imageController.renderLabel.gridColor.getBlue()) };
 		xmlData[29] = new String[] { "displaySettings.flipImage",Integer.toString(controlPanel.flipImageCheckboxPanel.checkbox.isSelected() ? 1 : 0) };
 
-		xmlHelper.AlterXML(xmlData, myProjectName);
+		xmlHelper.AlterXML(xmlData, myProjectName, useAppData, appDataFolderName);
 
-		xmlHelper.AlterXML("currentProjectFilePath", myProjectName.substring(0, myProjectName.lastIndexOf(File.separator)), configFilePath);
+		xmlHelper.AlterXML("currentProjectFilePath", myProjectName.substring(0, myProjectName.lastIndexOf(File.separator)), configFilePath, useAppData, appDataFolderName);
 		// reload the XML into the variable
 		xmlHelper.configXML = xmlHelper.GetXMLFromFile(configFilePath);
 

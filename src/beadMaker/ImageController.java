@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -159,31 +160,53 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 	public boolean flipImage = false;
 
 	public BeadMaker beadMaker;
+	
+	private boolean useAppData;
+	private String appDataFolderName;
 
 	//--------------------------------------------------------------
 	// CONSTRUCTOR
 	//--------------------------------------------------------------
-	ImageController(BeadMaker myBeadMaker, Palette myPallette, WindowController myWindowController, InterObjectCommunicator myOComm) {
-		oComm = myOComm;
-		oComm.setInterObjectCommunicatorEventListener(this);
+	ImageController(
+		BeadMaker myBeadMaker,
+		Palette myPallette,
+		WindowController
+		myWindowController,
+		InterObjectCommunicator myOComm,
+		boolean myUseAppData,
+		String myAppDataFolderName
+	) {
 		this.pallette = myPallette;
 		this.windowController = myWindowController;
 		this.beadMaker = myBeadMaker;
+		this.useAppData = myUseAppData;
+		this.appDataFolderName = myAppDataFolderName;
+		
+		oComm = myOComm;
+		oComm.setInterObjectCommunicatorEventListener(this);		
 		
 		renderLabel = new RenderLabel(this, beadMaker.controlPanel, beadMaker.oComm);
 		renderScrollPanel = new BMScrollPane(beadMaker, renderLabel);
 		
-		String imagePath = beadMaker.xmlWorker.GetAbsoluteFilePathStringFromXml("imageFile", beadMaker.xmlWorker.projectXML);
+		String imagePath = beadMaker.xmlWorker.GetAbsoluteFilePathStringFromXml("imageFile", beadMaker.xmlWorker.projectXML, useAppData, appDataFolderName);
 		consoleHelper.PrintMessage("imagePath from project XML = " + imagePath);
 
 		if (GlobalConstants.applyLUT == 1) {
-			loadLUT(System.getProperty("user.dir") + "\\LUTs\\" + "default.png");
+			if (useAppData) {
+				loadLUT(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "LUTs" + File.separator + "default.png");
+			} else {
+				loadLUT(System.getProperty("user.dir") + File.separator + "LUTs" + File.separator + "default.png");
+			}
 		}		
 		
 		setOriginalCleanedImage(imagePath);
 		
 		if (GlobalConstants.pixelArtMultiPaletteMode == 1) {
-			loadColorMap(System.getProperty("user.dir") + "\\ColorMaps\\" + "default.png");
+			if (useAppData) {
+				loadColorMap(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "ColorMaps" + File.separator + "default.png");
+			} else {
+				loadColorMap(System.getProperty("user.dir") + File.separator + "ColorMaps" + File.separator + "default.png");
+			}
 		}
 		
 		oComm.communicate("create buttons", "PALETTE");
@@ -194,13 +217,13 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 	public void setOriginalCleanedImage(String imagePath) {
 		//originalCleanedImage = (BMImage)ProcessingHelper.loadImage(imagePath);
 		//originalCleanedImage = new BMImage((Image)ProcessingHelper.loadImage(imagePath).getNative());
-		originalCleanedImage = new BMImage(imageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath));
+		originalCleanedImage = new BMImage(imageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath), useAppData, appDataFolderName);
 		updateImages();
 	}
 	
 	
 	public void loadLUT(String imagePath) {
-		lutImage = new BMImage(imageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath));
+		lutImage = new BMImage(imageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath), useAppData, appDataFolderName);
 	}
 	
 	public void loadColorMap(String imagePath) {
@@ -208,14 +231,16 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 		
 		BMImage colorMappedSprite;
 		
-		colorMap = new BMImage(imageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath));
+		colorMap = new BMImage(imageHelper.getBufferedImageWithAlphaChannelFromURL(imagePath), useAppData, appDataFolderName);
 		
 		consoleHelper.PrintMessage("colorMap.width = " + colorMap.width);
 
 		colorMappedImage = new BMImage(
 			originalCleanedImage.width * colorMap.width,
-			originalCleanedImage.height
-			);
+			originalCleanedImage.height,
+			useAppData,
+			appDataFolderName
+		);
 		
 		//colorMappedImage = originalCleanedImage.get();
 		
@@ -639,7 +664,11 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 			if (o instanceof String) {
 				setOriginalCleanedImage((String) o);
 				if (GlobalConstants.pixelArtMultiPaletteMode == 1) {
-					loadColorMap(System.getProperty("user.dir") + "\\ColorMaps\\" + "default.png");
+					if (useAppData) {
+						loadColorMap(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "ColorMaps" + File.separator + "default.png");
+					} else {
+						loadColorMap(System.getProperty("user.dir") + File.separator + "ColorMaps" + File.separator + "default.png");
+					}
 				}
 			}
 	    }

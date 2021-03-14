@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.JFileChooser;
+
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.pdf.PGraphicsPDF;
@@ -21,7 +23,7 @@ import core.SynchronousJFXFileChooser;
 
 public class PDFHelper {
 	
-ConsoleHelper consoleHelper = new ConsoleHelper();
+	ConsoleHelper consoleHelper;
 	
 	public volatile BMImage[][][] SavePatternPDF__pdfImage = null;
 	public volatile BMImage[][] SavePatternPDF__localImage = null;
@@ -34,17 +36,25 @@ ConsoleHelper consoleHelper = new ConsoleHelper();
 	public ImageController imageController;
 	public Palette pallette;
 	
+	public boolean useAppData;
+	public String appDataFolderName;
+	
 	static final int SavePatternPDF_textArea_Height = 50;
 	static final int CENTER   = 3;
 	static final int TOP = 101;
 
 	public PDFHelper(
 		WindowController myWindowController,
-		ImageController myImageController
+		ImageController myImageController,
+		boolean myUseAppData,
+		String myAppDataFolderName
 	) {
+		consoleHelper = new ConsoleHelper();
+		this.useAppData = myUseAppData;
+		this.appDataFolderName = myAppDataFolderName;
 		windowController = myWindowController;
 		imageController = myImageController;
-		pallette = imageController.pallette;
+		pallette = imageController.pallette;		
 	}
 
 	//---------------------------------------------------------------------------
@@ -55,7 +65,7 @@ ConsoleHelper consoleHelper = new ConsoleHelper();
 	public void SavePatternPDF(boolean fullColorPDFPrinting) {
 
 		DialogBoxHelper dialogBoxHelper = new DialogBoxHelper();
-		FileHelper fileHelper = new FileHelper();
+		FileHelper fileHelper = new FileHelper(useAppData, appDataFolderName);
 		ProcessingHelper processingHelper = new ProcessingHelper();
 		
 		int pdfWidth = 1;
@@ -88,7 +98,16 @@ ConsoleHelper consoleHelper = new ConsoleHelper();
 			}
 		}
 		
-		File dataDir = new File(System.getProperty("user.dir"), "\\");
+		File dataDir;
+//		if (useAppData) {
+//			dataDir = new File(System.getenv("APPDATA") + File.separator + appDataFolderName, File.separator);
+//		} else {
+//			dataDir = new File(System.getProperty("user.dir"), File.separator);
+//		}
+		
+		//returns "my documents" directory
+		//https://stackoverflow.com/questions/9677692/getting-my-documents-path-in-java
+		dataDir = new JFileChooser().getFileSystemView().getDefaultDirectory();
 		
 		File selectedFile;
 		

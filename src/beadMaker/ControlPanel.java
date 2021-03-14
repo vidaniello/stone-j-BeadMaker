@@ -134,11 +134,26 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
 	
 	public boolean expertMode = true;
 	
-	ConsoleHelper consoleHelper = new ConsoleHelper();
+	ConsoleHelper consoleHelper;
+	
+	private boolean useAppData;
+	private String appDataFolderName;
 	
 
-	ControlPanel(ImageController myImageController, Palette myPallette, XMLWorker myXMLHelper, InterObjectCommunicator myOComm) {
-				
+	ControlPanel(
+		ImageController myImageController,
+		Palette myPallette,
+		XMLWorker myXMLHelper,
+		InterObjectCommunicator myOComm,
+		boolean myUseAppData,
+		String myAppDataFolderName
+	) {
+		
+		this.useAppData = myUseAppData;
+		this.appDataFolderName = myAppDataFolderName;
+		
+		consoleHelper = new ConsoleHelper();
+		
 		oComm = myOComm;
 		oComm.setInterObjectCommunicatorEventListener(this);
 		
@@ -151,9 +166,15 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
 		
 		ActionListener customPalletteActionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				consoleHelper.PrintMessage(System.getProperty("user.dir") + "\\" + customPalletteFiles[0][customPallette.getSelectedIndex()]);
-						
-				pallette.GetPalletteFromXml(System.getProperty("user.dir") + "\\pallettes\\" + customPalletteFiles[0][customPallette.getSelectedIndex()], xMLHelper);
+				
+				if (useAppData) {
+					consoleHelper.PrintMessage(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + customPalletteFiles[0][customPallette.getSelectedIndex()]);
+					pallette.GetPalletteFromXml(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "pallettes" + File.separator + customPalletteFiles[0][customPallette.getSelectedIndex()], xMLHelper);
+				} else {
+					consoleHelper.PrintMessage(System.getProperty("user.dir") + File.separator + customPalletteFiles[0][customPallette.getSelectedIndex()]);
+					pallette.GetPalletteFromXml(System.getProperty("user.dir") + File.separator + "pallettes" + File.separator + customPalletteFiles[0][customPallette.getSelectedIndex()], xMLHelper);
+				}				
+				
 				imageController.selectedColorIndex = -1;
 				pallette.GetPalletteWithFiltersApplied();
 				imageController.updateImages();
@@ -169,7 +190,13 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
 		
 		ActionListener lutActionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				imageController.loadLUT(System.getProperty("user.dir") + "\\LUTs\\" + lutFiles[0][lutSelector.getSelectedIndex()]);
+				
+				if (useAppData) {
+					imageController.loadLUT(System.getenv("APPDATA") + File.separator + appDataFolderName + File.separator + "LUTs" + File.separator + lutFiles[0][lutSelector.getSelectedIndex()]);
+				} else {
+					imageController.loadLUT(System.getProperty("user.dir") + File.separator + "LUTs" + File.separator + lutFiles[0][lutSelector.getSelectedIndex()]);
+				}
+
 				imageController.updateImages();
 			}
 		};
@@ -292,7 +319,14 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
            }
         };
 
-		File pallettePath = new File(System.getProperty("user.dir"), "pallettes");
+		File pallettePath;
+		
+		if (useAppData) {
+			pallettePath = new File(System.getenv("APPDATA") + File.separator + appDataFolderName, "pallettes");
+		} else {
+			pallettePath = new File(System.getProperty("user.dir"), "pallettes");
+		}
+		
 		consoleHelper.PrintMessage(pallettePath.toString());
 		File[] listOfPalletteFiles = pallettePath.listFiles(fileNameFilter);
 		customPalletteFiles = new String[2][listOfPalletteFiles.length]; //index 0 = Filename, index 1 = common name
@@ -327,7 +361,14 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
            }
         };
         
-        File lutPath = new File(System.getProperty("user.dir"), "LUTs");
+        File lutPath;
+        
+        if (useAppData) {
+        	lutPath = new File(System.getenv("APPDATA") + File.separator + appDataFolderName, "LUTs");
+		} else {
+			lutPath = new File(System.getProperty("user.dir"), "LUTs");
+		}
+        
         consoleHelper.PrintMessage(lutPath.toString());
 		File[] listOfLUTFiles = lutPath.listFiles(lutFileNameFilter);
 		lutFiles = new String[2][listOfLUTFiles.length]; //index 0 = Filename, index 1 = common name
