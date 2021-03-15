@@ -24,10 +24,11 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 	 ------------- 
 	 BUGS:
 	 ------------- 
-	 2019-06-03 When project file is saved, the image file used is not correct
+	 FIXED 2019-06-03 When project file is saved, the image file used is not correct
 	 FIXED Transparent beads are being shown as opaque beads (load FF1 Frost dragon, see yellow bg pixels)
 	 When pallette gets reloaded/recreated (change color dials, etc.) the selected color bolding does not display
 	 FIXED When exporting PDF with only Artkal beads in pallette, the PDF gets messed up (multiple pages with same beads highlighted, omitted pages, etc)
+	 2021-03-13 open project --> change color values --> "save project" brings up "SAVE AS" dialog-- should just save with no dialog
 	 ------------------------------------------------------------------------------------------------------
 	 ------------- 
 	 FEATURES:

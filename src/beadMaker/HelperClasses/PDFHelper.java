@@ -115,7 +115,7 @@ public class PDFHelper {
         SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
         	dataDir,
         	"Portable Document Format (*.pdf)",
-        	new String[] {"*.pdf"}
+        	new String[] {"pdf"}
         );
         selectedFile = chooser.showSaveDialog();
         

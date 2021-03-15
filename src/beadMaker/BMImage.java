@@ -235,7 +235,7 @@ public class BMImage extends PImage {
 		SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
         	dataDir,
         	"Portable Network Graphics (*.png)",
-        	new String[] {"*.png"}
+        	new String[] {"png"}
         );
         selectedFile = chooser.showSaveDialog();	            
         
@@ -280,7 +280,7 @@ public class BMImage extends PImage {
 		SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser (
         	dataDir,
         	"OpenSCAD Designs (*.scad)",
-        	new String[] {"*.scad"}
+        	new String[] {"scad"}
         );
         selectedFile = chooser.showSaveDialog();	            
         

@@ -555,7 +555,8 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 			SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(
 				dataDir,
 				perlerProjectFileDescription,
-				new String[] {"*." + perlerProjectFileExtension}
+				//new String[] {"*." + perlerProjectFileExtension}
+				new String[] {perlerProjectFileExtension}
 			);
 			selectedFile = chooser.showSaveDialog();
 
