@@ -15,6 +15,9 @@ SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
 OutputBaseFilename=InstallPixelPerfect
 OutputDir=.
+;If you want to associate a program with an extension just add this instruction in your iss file
+;https://stackoverflow.com/questions/26536030/file-association-in-inno-setup
+ChangesAssociations = yes
 
 [Files]
 ;Source: "jre-8u281-windows-x64.exe"; DestDir: "{userappdata}\Nostalgic Pixels Pixel Perfect\java_installer"
@@ -52,6 +55,15 @@ Filename: "https://java.com/download/"; Flags: shellexec runascurrentuser postin
 
 [Icons]
 Name: "{group}\Pixel Perfect"; Filename: "{app}\PixelPerfect.exe"
+
+;If you want to associate a program with an extension just add this instruction in your iss file
+;https://stackoverflow.com/questions/26536030/file-association-in-inno-setup
+[Registry]
+Root: HKCR; Subkey: ".pbp";                                            ValueData: ".pbp_auto_file";          Flags: uninsdeletekey; ValueType: string;  ValueName: ""
+;Root: HKCR; Subkey: ".pbp_auto_file";                                  ValueData: "NostalgicPixelsPixelPerfect";          Flags: uninsdeletevalue; ValueType: string;  ValueName: ""
+;Root: HKCR; Subkey: "NostalgicPixelsPixelPerfect";                     ValueData: "Program NostalgicPixelsPixelPerfect";  Flags: uninsdeletekey;   ValueType: string;  ValueName: ""
+;Root: HKCR; Subkey: "NostalgicPixelsPixelPerfect\DefaultIcon";         ValueData: "{app}\PixelPerfect.exe,0";               		                   ValueType: string;  ValueName: ""
+Root: HKCR; Subkey: ".pbp_auto_file\shell\open\command";  ValueData: """{app}\PixelPerfect.exe"" ""%1""";  	 Flags: uninsdeletekey;		                     ValueType: string;  ValueName: ""
 
 [Code]
 procedure CurUninstallStepChanged (CurUninstallStep: TUninstallStep);

@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import beadMaker.HelperClasses.XMLWorker;
 import core.ConsoleHelper;
 import core.ExceptionLogger;
+import core.FileHelper;
 import core.InterObjectCommunicatorEventListener;
 import core.StringHelper;
 
@@ -61,19 +62,28 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 	
 	public ControlPanelScrollPane controlPanelScrollPane;
 	public ControlPanelSuperPanel controlPanelSuperPanel;
+	
+	private FileHelper fileHelper;
 			
 	public static void main(String[] args) throws Exception
 	{
-		new BeadMaker();
-		
+		new BeadMaker(args);
 	}
 
 	//------------------------------------------------------------
 	//CONSTRUCTOR
 	//------------------------------------------------------------
-	public BeadMaker() throws Exception
+	public BeadMaker(String[] args) throws Exception
 	{
 		exceptionLogger = new ExceptionLogger(useAppData, appDataFolderName);
+		
+		exceptionLogger.logMessage("LIST OF ARGS:");
+		for (int i = 0; i < args.length; i++) 
+		{ 
+			exceptionLogger.logMessage("Argument " + Integer.toString(i) + " = " + args[i]);
+		}
+		exceptionLogger.logMessage("--END LIST OF ARGS--");		
+		
 		
 		oComm = new InterObjectCommunicator();
 		oComm.setInterObjectCommunicatorEventListener(this);
@@ -81,6 +91,8 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 		windowController = new WindowController("Pixel Perfect", oComm, useAppData, appDataFolderName);	
 		
 		xmlWorker = new XMLWorker(useAppData, appDataFolderName);
+		
+		fileHelper = new FileHelper(useAppData, appDataFolderName);
 				
 		pallette = new Palette(xmlWorker.GetAbsoluteFilePathStringFromXml("defaultPallette", xmlWorker.configXML, useAppData, appDataFolderName), xmlWorker, oComm);
 		
@@ -158,7 +170,20 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 		windowController.add(controlPanelSuperPanel, BorderLayout.LINE_END);
 		
 		bMenuBar = new BMenuBar(xmlWorker.configXML, xmlWorker, imageController, controlPanel, this, oComm, useAppData, appDataFolderName);		
-		bMenuBar.LoadProject(xmlWorker.GetAbsoluteFilePathStringFromXml("defaultProjectFilePath", xmlWorker.configXML, useAppData, appDataFolderName), false);
+		
+		//if a PBP file was opened, try to load it
+		boolean loadedInputFile = false;
+		if(args.length > 0) {
+			String inputFileExtension = fileHelper.getExtension(args[0]);
+			if(inputFileExtension.equals("pbp")) {
+				bMenuBar.LoadProject(args[0], true);
+				loadedInputFile = true;
+			}
+		}
+		//otherwise, load the default project
+		if (!loadedInputFile) {
+			bMenuBar.LoadProject(xmlWorker.GetAbsoluteFilePathStringFromXml("defaultProjectFilePath", xmlWorker.configXML, useAppData, appDataFolderName), false);
+		}
 		
 		windowController.setMenuBar(bMenuBar);
 		
