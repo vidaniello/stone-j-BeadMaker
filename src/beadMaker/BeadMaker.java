@@ -77,14 +77,6 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 	{
 		exceptionLogger = new ExceptionLogger(useAppData, appDataFolderName);
 		
-		exceptionLogger.logMessage("LIST OF ARGS:");
-		for (int i = 0; i < args.length; i++) 
-		{ 
-			exceptionLogger.logMessage("Argument " + Integer.toString(i) + " = " + args[i]);
-		}
-		exceptionLogger.logMessage("--END LIST OF ARGS--");		
-		
-		
 		oComm = new InterObjectCommunicator();
 		oComm.setInterObjectCommunicatorEventListener(this);
 		
