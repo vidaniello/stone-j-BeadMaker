@@ -1,10 +1,10 @@
-package beadMaker.HelperClasses;
+package beadMaker.helpers;
 
 import java.io.File;
 
 import processing.data.XML;
 
-public class XMLWorker extends core.XmlHelper {
+public class XMLWorker extends core.helper.XmlHelper {
 
 	public XML[] configXML = new XML[1];
 	public XML[] projectXML = new XML[1];

@@ -1,4 +1,4 @@
-package beadMaker.HelperClasses;
+package beadMaker.helpers;
 
 import java.awt.Cursor;
 import java.awt.Font;
@@ -14,12 +14,11 @@ import beadMaker.BMImage;
 import beadMaker.ImageController;
 import beadMaker.Palette;
 import beadMaker.WindowController;
-
-import core.ConsoleHelper;
-import core.DialogBoxHelper;
-import core.FileHelper;
-import core.ProcessingHelper;
-import core.SynchronousJFXFileChooser;
+import core.helper.FileHelper;
+import core.helper.ProcessingHelper;
+import core.jfxComponent.SynchronousJFXFileChooser;
+import core.logging.ConsoleHelper;
+import core.swingComponent.DialogBoxHelper;
 
 public class PDFHelper {
 	

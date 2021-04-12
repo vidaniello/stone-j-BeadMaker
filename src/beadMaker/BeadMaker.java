@@ -3,19 +3,16 @@ package beadMaker;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.KeyEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import beadMaker.HelperClasses.XMLWorker;
-import core.ConsoleHelper;
-import core.ExceptionLogger;
-import core.FileHelper;
-import core.InterObjectCommunicatorEventListener;
-import core.StringHelper;
+import beadMaker.helpers.XMLWorker;
+import core.event.InterObjectCommunicatorEventListener;
+import core.helper.FileHelper;
+import core.logging.ExceptionLogger;
 
 public class BeadMaker implements InterObjectCommunicatorEventListener
 {	

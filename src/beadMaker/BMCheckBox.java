@@ -4,10 +4,10 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JCheckBox;
 
-import core.BorderMaker;
-import core.ConsoleHelper;
-import core.InterObjectCommunicatorEventListener;
-import core.StringHelper;
+import core.event.InterObjectCommunicatorEventListener;
+import core.helper.StringHelper;
+import core.logging.ConsoleHelper;
+import core.swingComponent.BorderMaker;
 
 public class BMCheckBox extends JCheckBox implements InterObjectCommunicatorEventListener {
 

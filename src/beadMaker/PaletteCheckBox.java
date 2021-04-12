@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 
-import core.ConsoleHelper;
+import core.logging.ConsoleHelper;
 
 public class PaletteCheckBox extends JCheckBox {
 	

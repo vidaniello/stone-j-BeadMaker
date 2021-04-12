@@ -20,12 +20,12 @@ import java.awt.geom.Ellipse2D;
 import javax.swing.JLabel;
 
 import processing.core.PImage;
-import core.ConsoleHelper;
-import core.ColorHelper;
-import core.Graphics2DMaker;
-import core.InterObjectCommunicatorEventListener;
-import core.MathHelper;
-import core.StringHelper;
+import core.event.InterObjectCommunicatorEventListener;
+import core.helper.ColorHelper;
+import core.helper.MathHelper;
+import core.helper.StringHelper;
+import core.imaging.Graphics2DMaker;
+import core.logging.ConsoleHelper;
 
 public class RenderLabel extends JLabel implements MouseMotionListener, MouseListener, InterObjectCommunicatorEventListener {
 

@@ -21,7 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
-import core.ConsoleHelper;
+import core.logging.ConsoleHelper;
 
 public class WindowController extends JFrame {
 

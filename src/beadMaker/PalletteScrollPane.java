@@ -5,8 +5,8 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.JScrollPane;
 
-import core.BorderMaker;
-import core.ConsoleHelper;
+import core.logging.ConsoleHelper;
+import core.swingComponent.BorderMaker;
 
 public class PalletteScrollPane extends JScrollPane {
 	

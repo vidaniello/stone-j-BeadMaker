@@ -7,8 +7,8 @@ import java.awt.Graphics;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import core.BorderMaker;
-import core.ConsoleHelper;
+import core.logging.ConsoleHelper;
+import core.swingComponent.BorderMaker;
 
 public class HoverLabel extends JLabel {
 	

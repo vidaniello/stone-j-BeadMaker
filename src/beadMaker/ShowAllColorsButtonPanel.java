@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import core.ColorHelper;
+import core.helper.ColorHelper;
 
 public class ShowAllColorsButtonPanel extends JPanel {
 	

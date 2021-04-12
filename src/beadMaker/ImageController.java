@@ -14,12 +14,12 @@ import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
 
 import processing.core.PImage;
-import core.ColorHelper;
-import core.ConsoleHelper;
-import core.ImageHelper;
-import core.InterObjectCommunicatorEventListener;
-import core.MathHelper;
-import core.ProcessingHelper;
+import core.event.InterObjectCommunicatorEventListener;
+import core.helper.ColorHelper;
+import core.helper.ImageHelper;
+import core.helper.MathHelper;
+import core.helper.ProcessingHelper;
+import core.logging.ConsoleHelper;
 
 public class ImageController implements InterObjectCommunicatorEventListener {
 

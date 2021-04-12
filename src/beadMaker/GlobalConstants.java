@@ -9,4 +9,6 @@ public class GlobalConstants {
 	static final boolean showOriginalImageInsteadOfPixelMappedImage = false;
 	static final int applyLUT  = 0;
 	static final int pixelArtMultiPaletteMode  = 0;
+	//move beadCountMinN to a user control eventually
+	static final int beadCountMinN = 5;
 }

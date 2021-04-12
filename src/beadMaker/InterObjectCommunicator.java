@@ -3,7 +3,7 @@ package beadMaker;
 import java.awt.event.KeyEvent;
 
 import beadMaker.BMImage.DitherMethod;
-import core.InterObjectCommunicatorEventListener;
+import core.event.InterObjectCommunicatorEventListener;
 
 public class InterObjectCommunicator {
 	

@@ -4,7 +4,7 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 
-import core.ConsoleHelper;
+import core.logging.ConsoleHelper;
 
 public class KeyboardListener {
 	

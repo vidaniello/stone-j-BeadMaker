@@ -10,14 +10,14 @@ import java.util.List;
 
 import javax.swing.Box;
 
+import beadMaker.helpers.XMLWorker;
 import processing.data.XML;
-import core.ColorHelper;
-import core.Comparator_IntArray;
-import core.ConsoleHelper;
-import core.InterObjectCommunicatorEventListener;
-import core.StringHelper;
-import core.ArrayHelper;
-import beadMaker.HelperClasses.XMLWorker;
+import core.event.InterObjectCommunicatorEventListener;
+import core.helper.ColorHelper;
+import core.helper.StringHelper;
+import core.logging.ConsoleHelper;
+import core.variable.ArrayHelper;
+import core.variable.Comparator_IntArray;
 
 
 public class Palette implements InterObjectCommunicatorEventListener {

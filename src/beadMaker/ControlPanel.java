@@ -17,13 +17,13 @@ import javax.swing.JPanel;
 
 import processing.data.XML;
 import beadMaker.ImageController.PegboardMode;
-import core.BorderMaker;
-import core.ConsoleHelper;
-import core.InterObjectCommunicatorEventListener;
-import core.JComboBoxMaker;
-import core.JPanelPaintable;
-import core.MathHelper;
-import beadMaker.HelperClasses.XMLWorker;
+import beadMaker.helpers.XMLWorker;
+import core.event.InterObjectCommunicatorEventListener;
+import core.helper.MathHelper;
+import core.logging.ConsoleHelper;
+import core.swingComponent.BorderMaker;
+import core.swingComponent.JComboBoxMaker;
+import core.swingComponent.JPanelPaintable;
 
 public class ControlPanel extends JPanel implements InterObjectCommunicatorEventListener {
 

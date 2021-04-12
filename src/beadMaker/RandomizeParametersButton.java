@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
-import core.MathHelper;
+import core.helper.MathHelper;
 
 public class RandomizeParametersButton extends JButton {
 

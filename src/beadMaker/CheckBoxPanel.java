@@ -8,9 +8,9 @@ import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import core.BorderMaker;
-import core.ConsoleHelper;
-import core.StringHelper;
+import core.helper.StringHelper;
+import core.logging.ConsoleHelper;
+import core.swingComponent.BorderMaker;
 
 public class CheckBoxPanel extends JPanel {
 	

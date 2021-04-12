@@ -18,14 +18,15 @@ import java.net.URISyntaxException;
 import processing.data.XML;
 import beadMaker.Palette.ExcludePearls;
 import beadMaker.Palette.ExcludeTranslucents;
-import core.ArrayHelper;
-import core.ConsoleHelper;
-import core.ConsoleHelper.MessageLevel;
-import core.FileHelper;
-import core.InterObjectCommunicatorEventListener;
-import core.SynchronousJFXFileChooser;
-import beadMaker.HelperClasses.PDFHelper;
-import beadMaker.HelperClasses.XMLWorker;
+import beadMaker.helpers.PDFHelper;
+import beadMaker.helpers.XMLWorker;
+import core.jfxComponent.SynchronousJFXFileChooser;
+import core.logging.ConsoleHelper;
+import core.logging.ConsoleHelper.MessageLevel;
+import core.variable.ArrayHelper;
+import core.event.InterObjectCommunicatorEventListener;
+import core.helper.FileHelper;
+
 import java.io.IOException;
 
 public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventListener {

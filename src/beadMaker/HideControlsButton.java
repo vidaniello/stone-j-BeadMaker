@@ -7,9 +7,9 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 
-import core.BorderMaker;
-import core.ConsoleHelper;
-import core.InterObjectCommunicatorEventListener;
+import core.event.InterObjectCommunicatorEventListener;
+import core.logging.ConsoleHelper;
+import core.swingComponent.BorderMaker;
 
 public class HideControlsButton extends JButton implements InterObjectCommunicatorEventListener {
 

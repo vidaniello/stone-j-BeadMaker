@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
-import core.ColorHelper;
+import core.helper.ColorHelper;
 
 public class PaletteButton extends JButton {
 

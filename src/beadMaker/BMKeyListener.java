@@ -3,7 +3,7 @@ package beadMaker;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import core.ConsoleHelper;
+import core.logging.ConsoleHelper;
 
 public class BMKeyListener implements KeyListener {
 	

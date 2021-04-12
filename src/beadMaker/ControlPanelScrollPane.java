@@ -8,7 +8,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import core.BorderMaker;
+import core.swingComponent.BorderMaker;
 
 public class ControlPanelScrollPane extends JScrollPane {
 

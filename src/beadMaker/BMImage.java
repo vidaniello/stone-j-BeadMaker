@@ -8,12 +8,12 @@ import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
 
-import core.ColorHelper;
 import processing.core.PImage;
-import core.ConsoleHelper;
-import core.FileHelper;
-import core.MathHelper;
-import core.SynchronousJFXFileChooser;
+import core.helper.ColorHelper;
+import core.helper.FileHelper;
+import core.helper.MathHelper;
+import core.jfxComponent.SynchronousJFXFileChooser;
+import core.logging.ConsoleHelper;
 
 public class BMImage extends PImage {
 	
@@ -429,7 +429,15 @@ public class BMImage extends PImage {
 		consoleHelper.PrintMessage("SwapToPerlerColors");
 
 		this.Sharpen(colorMatchingWeight_Sharpness);
-		this.ColorCorrect(colorMatchingWeight_R, colorMatchingWeight_G, colorMatchingWeight_B, colorMatchingWeight_Saturation, colorMatchingWeight_Contrast, colorMatchingWeight_Brightness, lutImage);
+		this.ColorCorrect(
+			colorMatchingWeight_R,
+			colorMatchingWeight_G,
+			colorMatchingWeight_B,
+			colorMatchingWeight_Saturation,
+			colorMatchingWeight_Contrast,
+			colorMatchingWeight_Brightness,
+			lutImage
+		);
 
 		int
 		pixelR,
@@ -493,7 +501,7 @@ public class BMImage extends PImage {
 								RedPerceptionCorrectionFactor 	= Artkal_RedPerceptionCorrectionFactor;
 								GreenPerceptionCorrectionFactor = Artkal_GreenPerceptionCorrectionFactor;
 								BluePerceptionCorrectionFactor 	= Artkal_BluePerceptionCorrectionFactor;
-								//Perler
+							//Perler
 							} else { 
 								RedPerceptionCorrectionFactor 	=  Perler_RedPerceptionCorrectionFactor;
 								GreenPerceptionCorrectionFactor =  Perler_GreenPerceptionCorrectionFactor;
@@ -501,11 +509,11 @@ public class BMImage extends PImage {
 							}					
 	
 							rgbDistance =
-									(int)(
-											Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex13_MapRed		] - pixelR) * 100 / RedPerceptionCorrectionFactor  , 2) +
-											Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex14_MapGreen	] - pixelG) * 100 / GreenPerceptionCorrectionFactor, 2) +
-											Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex15_MapBlue	] - pixelB) * 100 / BluePerceptionCorrectionFactor , 2)
-											);
+								(int)(
+									Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex13_MapRed		] - pixelR) * 100 / RedPerceptionCorrectionFactor  , 2) +
+									Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex14_MapGreen	] - pixelG) * 100 / GreenPerceptionCorrectionFactor, 2) +
+									Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex15_MapBlue	] - pixelB) * 100 / BluePerceptionCorrectionFactor , 2)
+								);
 							//If there is a better match for the pixel, do this
 							if (rgbDistance < bestRGBDistance) {
 								bestRGBDistance = rgbDistance;
@@ -555,11 +563,11 @@ public class BMImage extends PImage {
 	
 					//See Utilities.pixeltoColor for bit shifting background
 					this.pixels[i] = ColorHelper.rgbaToProcessingColor(
-							pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex00_Red],
-							pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex01_Green],
-							pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex02_Blue],
-							255
-							);
+						pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex00_Red],
+						pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex01_Green],
+						pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex02_Blue],
+						255
+					);
 				}
 			}
 	

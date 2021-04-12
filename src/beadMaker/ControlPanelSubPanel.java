@@ -7,7 +7,7 @@ import java.awt.Graphics;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import core.BorderMaker;
+import core.swingComponent.BorderMaker;
 
 public class ControlPanelSubPanel extends JPanel {
 	
