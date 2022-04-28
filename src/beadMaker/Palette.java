@@ -19,6 +19,8 @@ import core.logging.ConsoleHelper;
 import core.variable.ArrayHelper;
 import core.variable.Comparator_IntArray;
 
+import beadMaker.GlobalConstants;
+
 
 public class Palette implements InterObjectCommunicatorEventListener {
 
@@ -68,7 +70,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 
 	public final int arrayIndex00_Red 					=  0;
 	public final int arrayIndex01_Green 				=  1;
-	public final int arrayIndex02_Blue 				=  2;
+	public final int arrayIndex02_Blue 					=  2;
 	//public final int arrayIndex03_RelativeUsefulness 	=  3;
 	public final int arrayIndex04_ColorIndex 			=  4;
 	public final int arrayIndex05_PixelCount 			=  5;
@@ -76,15 +78,18 @@ public class Palette implements InterObjectCommunicatorEventListener {
 	public final int arrayIndex07_IsTranslucent 		=  7;
 	public final int arrayIndex08_IsNeutral 			=  8;
 	public final int arrayIndex09_IsGrayscale 			=  9;
-	public final int arrayIndex10_Disabled 			= 10;
+	public final int arrayIndex10_Disabled 				= 10;
 	public final int arrayIndex11_Brand 				= 11;
 	public final int arrayIndex12_DisableGlobally 		= 12;
 	public final int arrayIndex13_MapRed 				= 13;
-	public final int arrayIndex14_MapGreen 			= 14;
+	public final int arrayIndex14_MapGreen 				= 14;
 	public final int arrayIndex15_MapBlue 				= 15;
-	public final int arrayIndex16_IsChecked			= 16;
+	public final int arrayIndex16_IsChecked				= 16;
 	//Added 2020-03-21
-	public final int arrayIndex17_SortOrder			= 17;
+	public final int arrayIndex17_SortOrder				= 17;
+	//added 2022-04-12
+	//public final int arrayIndex18_SecondBestPixelCount 	= 18;
+	public final int arrayIndex19_FailedMinBeadCheck 	= 19;
 
 	public final int brandIdPerler	= 1;
 	public final int brandIdHama	= 2;
@@ -111,7 +116,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 	Color selectedColor = new Color(253,254,255); //Setting this to a random color that doesn't match any pallette colors. (previously it was set to -1, which was a color match to Arkal White.
 	int selectedColorIndex = -1;
 	
-	public int[][] currentPallette;
+	public int[][] currentPalette;
 
 	public List<PaletteSubPanel> palletteSubPanels;
 
@@ -162,9 +167,9 @@ public class Palette implements InterObjectCommunicatorEventListener {
 	//	}
 	
 	public void checkUncheck(int colorIndex, boolean checkedState) {
-		for (int i = 0; i < currentPallette.length; i++) {
-			if (currentPallette[i][arrayIndex04_ColorIndex] == colorIndex) {
-				currentPallette[i][arrayIndex16_IsChecked] = (checkedState) ? 1 : 0;
+		for (int i = 0; i < currentPalette.length; i++) {
+			if (currentPalette[i][arrayIndex04_ColorIndex] == colorIndex) {
+				currentPalette[i][arrayIndex16_IsChecked] = (checkedState) ? 1 : 0;
 			}
 		}
 		oComm.communicate("update images", "IMAGE_CONTROLLER");
@@ -184,26 +189,26 @@ public class Palette implements InterObjectCommunicatorEventListener {
 		palletteSubPanels = new ArrayList<>();
 		
 		//this loop is for any colors with beadCount > 0
-		for (int i = 0; i < currentPallette.length; i++) {
-			int currentIndex = currentPallette[i][arrayIndex04_ColorIndex];
+		for (int i = 0; i < currentPalette.length; i++) {
+			int currentIndex = currentPalette[i][arrayIndex04_ColorIndex];
 			Color color = new Color(
-					currentPallette[i][arrayIndex00_Red],
-					currentPallette[i][arrayIndex01_Green],
-					currentPallette[i][arrayIndex02_Blue]);
-			if(currentPallette[i][arrayIndex05_PixelCount] > 0) {
-				palletteSubPanels.add(new PaletteSubPanel(perlerColorsNames[currentIndex][1] + " " + perlerColorsNames[currentIndex][0]+ " - " + currentPallette[i][arrayIndex05_PixelCount], color, this, currentPallette[i][arrayIndex04_ColorIndex], true, oComm));
+					currentPalette[i][arrayIndex00_Red],
+					currentPalette[i][arrayIndex01_Green],
+					currentPalette[i][arrayIndex02_Blue]);
+			if(currentPalette[i][arrayIndex05_PixelCount] > 0) {
+				palletteSubPanels.add(new PaletteSubPanel(perlerColorsNames[currentIndex][1] + " " + perlerColorsNames[currentIndex][0]+ " - " + currentPalette[i][arrayIndex05_PixelCount], color, this, currentPalette[i][arrayIndex04_ColorIndex], true, oComm));
 			}
 		}
 		
 		//this loop is for any unchecked colors (beadCount = 0)
-		for (int i = 0; i < currentPallette.length; i++) {
-			int currentIndex = currentPallette[i][arrayIndex04_ColorIndex];
+		for (int i = 0; i < currentPalette.length; i++) {
+			int currentIndex = currentPalette[i][arrayIndex04_ColorIndex];
 			Color color = new Color(
-					currentPallette[i][arrayIndex00_Red],
-					currentPallette[i][arrayIndex01_Green],
-					currentPallette[i][arrayIndex02_Blue]);
-			if (currentPallette[i][arrayIndex16_IsChecked] == 0) {
-				palletteSubPanels.add(new PaletteSubPanel(perlerColorsNames[currentIndex][1] + " " + perlerColorsNames[currentIndex][0]+ " - " + currentPallette[i][arrayIndex05_PixelCount], color, this, currentPallette[i][arrayIndex04_ColorIndex], false, oComm));
+					currentPalette[i][arrayIndex00_Red],
+					currentPalette[i][arrayIndex01_Green],
+					currentPalette[i][arrayIndex02_Blue]);
+			if (currentPalette[i][arrayIndex16_IsChecked] == 0) {
+				palletteSubPanels.add(new PaletteSubPanel(perlerColorsNames[currentIndex][1] + " " + perlerColorsNames[currentIndex][0]+ " - " + currentPalette[i][arrayIndex05_PixelCount], color, this, currentPalette[i][arrayIndex04_ColorIndex], false, oComm));
 			}
 		}
 
@@ -241,31 +246,32 @@ public class Palette implements InterObjectCommunicatorEventListener {
 		
 		//Create final arrays based on number of colors in XML file		
 		perlerColorsNames = new String[colorXml.length][2];
-		perlerColorsRGB = new int[colorXml.length][18];
+		perlerColorsRGB = new int[colorXml.length][20];
 
 		for (int i = 0; i < colorXml.length; i++) {
 
-			perlerColorsNames[i][0							] = colorXml[i].getChild("name")			.getContent();
-			perlerColorsNames[i][1							] = colorXml[i].getChild("productCode")		.getContent();
+			perlerColorsNames[i][0								] = colorXml[i].getChild("name")			.getContent();
+			perlerColorsNames[i][1								] = colorXml[i].getChild("productCode")		.getContent();
 
-			perlerColorsRGB[i][arrayIndex00_Red				] = colorXml[i].getChild("red")  			.getIntContent();
-			perlerColorsRGB[i][arrayIndex01_Green			] = colorXml[i].getChild("green") 			.getIntContent();
-			perlerColorsRGB[i][arrayIndex02_Blue			] = colorXml[i].getChild("blue")			.getIntContent();
+			perlerColorsRGB[i][arrayIndex00_Red					] = colorXml[i].getChild("red")  			.getIntContent();
+			perlerColorsRGB[i][arrayIndex01_Green				] = colorXml[i].getChild("green") 			.getIntContent();
+			perlerColorsRGB[i][arrayIndex02_Blue				] = colorXml[i].getChild("blue")			.getIntContent();
 
-			perlerColorsRGB[i][arrayIndex04_ColorIndex		] = colorXml[i].getInt  ("colorIndex");
-			perlerColorsRGB[i][arrayIndex05_PixelCount		] = 0;
-			perlerColorsRGB[i][arrayIndex06_IsPearl			] = colorXml[i].getChild("isPearl")			.getIntContent();
-			perlerColorsRGB[i][arrayIndex07_IsTranslucent	] = colorXml[i].getChild("isTranslucent")	.getIntContent();
-			perlerColorsRGB[i][arrayIndex08_IsNeutral		] = colorXml[i].getChild("isNeutral")		.getIntContent();
-			perlerColorsRGB[i][arrayIndex09_IsGrayscale		] = colorXml[i].getChild("isGrayscale")		.getIntContent();
-			perlerColorsRGB[i][arrayIndex10_Disabled		] = colorXml[i].getChild("disabled")		.getIntContent();
-			perlerColorsRGB[i][arrayIndex12_DisableGlobally	] = colorXml[i].getChild("disabled")		.getIntContent();
-			perlerColorsRGB[i][arrayIndex16_IsChecked		] = 1;
+			perlerColorsRGB[i][arrayIndex04_ColorIndex			] = colorXml[i].getInt  ("colorIndex");
+			perlerColorsRGB[i][arrayIndex05_PixelCount			] = 0;
+			perlerColorsRGB[i][arrayIndex06_IsPearl				] = colorXml[i].getChild("isPearl")			.getIntContent();
+			perlerColorsRGB[i][arrayIndex07_IsTranslucent		] = colorXml[i].getChild("isTranslucent")	.getIntContent();
+			perlerColorsRGB[i][arrayIndex08_IsNeutral			] = colorXml[i].getChild("isNeutral")		.getIntContent();
+			perlerColorsRGB[i][arrayIndex09_IsGrayscale			] = colorXml[i].getChild("isGrayscale")		.getIntContent();
+			perlerColorsRGB[i][arrayIndex10_Disabled			] = colorXml[i].getChild("disabled")		.getIntContent();
+			perlerColorsRGB[i][arrayIndex12_DisableGlobally		] = colorXml[i].getChild("disabled")		.getIntContent();
+			perlerColorsRGB[i][arrayIndex16_IsChecked			] = 1;
 			if (colorXml[i].getChild("sortOrder") != null) {
-				perlerColorsRGB[i][arrayIndex17_SortOrder	] = colorXml[i].getChild("sortOrder")		.getIntContent(); //if it doesn't exist, default to the ColorIndex instead (backward compatibility with old palette XML files)
+				perlerColorsRGB[i][arrayIndex17_SortOrder		] = colorXml[i].getChild("sortOrder")		.getIntContent(); //if it doesn't exist, default to the ColorIndex instead (backward compatibility with old palette XML files)
 			} else {
-				perlerColorsRGB[i][arrayIndex17_SortOrder	] = perlerColorsRGB[i][arrayIndex04_ColorIndex];
+				perlerColorsRGB[i][arrayIndex17_SortOrder		] = perlerColorsRGB[i][arrayIndex04_ColorIndex];
 			}
+			//perlerColorsRGB[i][arrayIndex18_SecondBestPixelCount] = 0;
 			
 			switch(colorXml[i].getChild("brand").getContent()) {
 			case brandNamePerler:
@@ -399,7 +405,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 		}
 
 		//Create final array based on number of active colors
-		int[][] returnPallette = new int[arrayLength][18];
+		int[][] returnPallette = new int[arrayLength][20];
 
 		//Populate final array
 		for (int i = 0; i < perlerColorsRGB.length; i++) {
@@ -410,7 +416,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 		}
 
 		consoleHelper.PrintMessage("%%%%%%%%%%%%%%%%%%TOTAL PALLETTE COLORS = " + arrayLength + "%%%%%%%%%%%%%%%%%%");
-		currentPallette = returnPallette;
+		currentPalette = returnPallette;
 	}
 
 
@@ -491,13 +497,13 @@ public class Palette implements InterObjectCommunicatorEventListener {
 		String myUncheckedIndices = "";
 		boolean isFirstUncheckedIndex = true;
 		
-		for (int i = 0; i < currentPallette.length; i++) {
-			if (currentPallette[i][arrayIndex16_IsChecked] == 0) {
+		for (int i = 0; i < currentPalette.length; i++) {
+			if (currentPalette[i][arrayIndex16_IsChecked] == 0) {
 				if (isFirstUncheckedIndex) {
-					myUncheckedIndices = Integer.toString(currentPallette[i][arrayIndex04_ColorIndex]);
+					myUncheckedIndices = Integer.toString(currentPalette[i][arrayIndex04_ColorIndex]);
 					isFirstUncheckedIndex = false;
 				} else {
-					myUncheckedIndices = String.join(",", myUncheckedIndices, Integer.toString(currentPallette[i][arrayIndex04_ColorIndex]));
+					myUncheckedIndices = String.join(",", myUncheckedIndices, Integer.toString(currentPalette[i][arrayIndex04_ColorIndex]));
 				}
 			}
 		}

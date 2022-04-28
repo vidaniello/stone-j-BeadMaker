@@ -44,5 +44,6 @@ http://codebeautify.org/xml-to-excel-converter
 			<blue>1</blue>
 		</gridColor>
 		<flipImage>0</flipImage>
+		<minimumBeads>0</minimumBeads>
 	</displaySettings>
 </project>

@@ -111,14 +111,14 @@ public class RenderLabel extends JLabel implements MouseMotionListener, MouseLis
 
 			if (pixelColor.getAlpha() == 255) {
 
-				int myPalletteIndex = imageController.colorCorrectedBeadMappedImage.GetPerlerPalletteIndexForSinglePixel(pixelColor, imageController.pallette);
+				int myPalletteIndex = imageController.colorCorrectedBeadMappedImage.GetPerlerPaletteIndexForSinglePixel(pixelColor, imageController.pallette);
 
 				String
-				hoverText = 		imageController.pallette.perlerColorsNames[imageController.pallette.currentPallette[myPalletteIndex][imageController.pallette.arrayIndex04_ColorIndex]][1];
-				hoverText += " " + 	imageController.pallette.perlerColorsNames[imageController.pallette.currentPallette[myPalletteIndex][imageController.pallette.arrayIndex04_ColorIndex]][0];
-				hoverText += " (R: " + imageController.pallette.perlerColorsRGB[imageController.pallette.currentPallette[myPalletteIndex][imageController.pallette.arrayIndex04_ColorIndex]][imageController.pallette.arrayIndex00_Red];
-				hoverText += " G: " + imageController.pallette.perlerColorsRGB[imageController.pallette.currentPallette[myPalletteIndex][imageController.pallette.arrayIndex04_ColorIndex]][imageController.pallette.arrayIndex01_Green];
-				hoverText += " B: " + imageController.pallette.perlerColorsRGB[imageController.pallette.currentPallette[myPalletteIndex][imageController.pallette.arrayIndex04_ColorIndex]][imageController.pallette.arrayIndex02_Blue];
+				hoverText = 		imageController.pallette.perlerColorsNames[imageController.pallette.currentPalette[myPalletteIndex][imageController.pallette.arrayIndex04_ColorIndex]][1];
+				hoverText += " " + 	imageController.pallette.perlerColorsNames[imageController.pallette.currentPalette[myPalletteIndex][imageController.pallette.arrayIndex04_ColorIndex]][0];
+				hoverText += " (R: " + imageController.pallette.perlerColorsRGB[imageController.pallette.currentPalette[myPalletteIndex][imageController.pallette.arrayIndex04_ColorIndex]][imageController.pallette.arrayIndex00_Red];
+				hoverText += " G: " + imageController.pallette.perlerColorsRGB[imageController.pallette.currentPalette[myPalletteIndex][imageController.pallette.arrayIndex04_ColorIndex]][imageController.pallette.arrayIndex01_Green];
+				hoverText += " B: " + imageController.pallette.perlerColorsRGB[imageController.pallette.currentPalette[myPalletteIndex][imageController.pallette.arrayIndex04_ColorIndex]][imageController.pallette.arrayIndex02_Blue];
 				hoverText += ")";
 
 				imageController.beadMaker.controlPanel.hoveredPixelColor.setText(hoverText);

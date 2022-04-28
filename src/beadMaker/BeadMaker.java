@@ -3,16 +3,21 @@ package beadMaker;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import beadMaker.ImageController.PegboardMode;
 import beadMaker.helpers.XMLWorker;
 import core.event.InterObjectCommunicatorEventListener;
 import core.helper.FileHelper;
 import core.logging.ExceptionLogger;
+import core.swingComponent.JComboBoxMaker;
 
 public class BeadMaker implements InterObjectCommunicatorEventListener
 {	
@@ -24,16 +29,18 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 	 ------------- 
 	 FIXED 2019-06-03 When project file is saved, the image file used is not correct
 	 FIXED Transparent beads are being shown as opaque beads (load FF1 Frost dragon, see yellow bg pixels)
-	 When pallette gets reloaded/recreated (change color dials, etc.) the selected color bolding does not display
+	 FIXED When pallette gets reloaded/recreated (change color dials, etc.) the selected color bolding does not display
 	 FIXED When exporting PDF with only Artkal beads in pallette, the PDF gets messed up (multiple pages with same beads highlighted, omitted pages, etc)
 	 2021-03-13 open project --> change color values --> "save project" brings up "SAVE AS" dialog-- should just save with no dialog
+	 2022-04-14 Keyboard input throws error and doesn't do anything 
 	 ------------------------------------------------------------------------------------------------------
 	 ------------- 
 	 FEATURES:
 	 ------------- 
-	 Mouse over beads should show color somewhere
-	 project stats window somewhere
-	 reorganize/clean up controls (watch out for regression)	 
+	 DONE Mouse over beads should show color somewhere
+	 DONE project stats window somewhere
+	 DONE reorganize/clean up controls (watch out for regression)
+	 DONE 2022-04-28 Add "Minimum Beads" function (includes saving and loading the setting from XML)	 
 	 */
 	
 	//For InterObjectCommunicator identification
@@ -54,6 +61,10 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 	public ShowAllColorsButtonPanel showAllColorsButtonPanel;
 	
 	public HoverLabel totalBeadsUsedLabel;
+	
+	ControlPanelSubPanel minBeadsPanel =  new ControlPanelSubPanel(new Color(255,255,255), false);
+	public JComboBox<String> minBeadsComboBox;
+	ControlLabel labelMinBeads;
 	
 	ExceptionLogger exceptionLogger;
 	
@@ -97,6 +108,56 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 		
 		totalBeadsUsedPanel.add(totalBeadsUsedLabel);
 		
+		int[] minBeadsOptionsValues = {
+			0,
+			5,
+			10,
+			25,
+			50,
+			100,
+			200,
+			500
+		};
+		
+		String[] minBeadsOptions = {
+			"0",
+			"5",
+			"10",
+			"25",
+			"50",
+			"100",
+			"200",
+			"500"
+		};
+		
+		ActionListener minBeadsActionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				oComm.communicate(
+					"set min beads",
+					minBeadsOptionsValues[minBeadsComboBox.getSelectedIndex()],
+					"IMAGE_CONTROLLER"
+				);
+			}
+		};
+		
+		minBeadsComboBox = JComboBoxMaker.makeJComboBox(minBeadsOptions);
+		minBeadsComboBox.addActionListener(minBeadsActionListener);
+		
+		minBeadsComboBox.setPreferredSize(new Dimension(30,30));
+		minBeadsComboBox.setMaximumSize(new Dimension(60,30));
+		
+		minBeadsPanel.add(minBeadsComboBox);
+		//minBeadsPanel.setMaximumSize(new Dimension(90,70));
+		
+		labelMinBeads = new ControlLabel("Minimum Beads Per Color:");
+		labelMinBeads.setPreferredSize(new Dimension(100,30));
+		
+		minBeadsPanel.add(Box.createRigidArea(new Dimension(20,0)));
+		minBeadsPanel.add(labelMinBeads);
+		minBeadsPanel.add(Box.createRigidArea(new Dimension(16,0)));
+		minBeadsPanel.add(minBeadsComboBox);
+		minBeadsPanel.add(Box.createRigidArea(new Dimension(16,0)));
+		
 		
 		//this key listener currently does nothing.
 		//In order to support key commands,
@@ -116,7 +177,8 @@ public class BeadMaker implements InterObjectCommunicatorEventListener
 		//	ConsoleHelper.PrintMessage("NULL POINTER EXCEPTION: controlPanel.showAllColorsButtonPanel");
 		//}
 			
-		palletteSuperPanel.add(totalBeadsUsedPanel);		
+		palletteSuperPanel.add(totalBeadsUsedPanel);	
+		palletteSuperPanel.add(minBeadsPanel);
 				
 		//ConsoleHelper.PrintMessage("renderPanel width = " + Integer.toString(imageController.renderJPanel.getBounds().width));
 		//ConsoleHelper.PrintMessage("renderPanel height = " + Integer.toString(imageController.renderJPanel.getBounds().height));

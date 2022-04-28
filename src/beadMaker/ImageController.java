@@ -117,6 +117,8 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 	PImage pixelsContainer;
 	
 	public boolean splitSuperPegboard = true;
+	
+	public int minBeads = 0;
 
 	//public boolean showPixelsAsBeads = false;
 	
@@ -335,6 +337,16 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 		this.flipImage = state;
 		updateImages();
 	}
+	
+	
+	//---------------------------------------------------------------------------
+	//setMinBeads
+	//---------------------------------------------------------------------------
+	public void setMinBeads(Integer minBeads) {
+		this.minBeads = minBeads;
+		updateImages();
+		oComm.communicate("create buttons", "PALETTE");
+	}
 
 
 	//---------------------------------------------------------------------------
@@ -365,8 +377,10 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 				colorMatchingWeight_Contrast,
 				colorMatchingWeight_Brightness,
 				colorMatchingWeight_Sharpness,
-				lutImage
-				);
+				lutImage,
+				minBeads,
+				false
+			);
 		}
 
 		ImageIcon perlerSwappedIcon;
@@ -393,35 +407,35 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 	}
 
 
-	//---------------------------------------------------------------------------
-	//GetImageScale
-	//---------------------------------------------------------------------------
-	public int GetImageScale(BMImage myBMImage, JPanel jPanel) {
-		consoleHelper.PrintMessage("GetImageScale");
-
-		int imageScaleX = 0, imageScaleY = 0;
-		int windowWidth, windowHeight;
-
-		Rectangle r = jPanel.getBounds();
-		CompoundBorder compoundBorder = (CompoundBorder) jPanel.getBorder();
-		Insets outerInsets = compoundBorder.getOutsideBorder().getBorderInsets(jPanel);
-		//Insets innerInsets = compoundBorder.getInsideBorder().getBorderInsets(jPanel);
-		int borderThickness = outerInsets.top;
-
-		consoleHelper.PrintMessage("borderThickness = " + Integer.toString(borderThickness));
-
-		windowWidth = r.width - borderThickness * 2;
-		windowHeight = r.height - borderThickness * 2;
-
-		consoleHelper.PrintMessage("window height = " + Integer.toString(r.height));
-		consoleHelper.PrintMessage("window width = " + Integer.toString(r.width));
-
-		imageScaleX = (int) Math.floor(windowWidth * 1.0f / myBMImage.width);
-		imageScaleY = (int) Math.floor(windowHeight * 1.0f / myBMImage.height);
-
-
-		return MathHelper.SetNonZeroValue(imageScaleY < imageScaleX ? imageScaleY : imageScaleX);
-	}
+//	//---------------------------------------------------------------------------
+//	//GetImageScale
+//	//---------------------------------------------------------------------------
+//	public int GetImageScale(BMImage myBMImage, JPanel jPanel) {
+//		consoleHelper.PrintMessage("GetImageScale");
+//
+//		int imageScaleX = 0, imageScaleY = 0;
+//		int windowWidth, windowHeight;
+//
+//		Rectangle r = jPanel.getBounds();
+//		CompoundBorder compoundBorder = (CompoundBorder) jPanel.getBorder();
+//		Insets outerInsets = compoundBorder.getOutsideBorder().getBorderInsets(jPanel);
+//		//Insets innerInsets = compoundBorder.getInsideBorder().getBorderInsets(jPanel);
+//		int borderThickness = outerInsets.top;
+//
+//		consoleHelper.PrintMessage("borderThickness = " + Integer.toString(borderThickness));
+//
+//		windowWidth = r.width - borderThickness * 2;
+//		windowHeight = r.height - borderThickness * 2;
+//
+//		consoleHelper.PrintMessage("window height = " + Integer.toString(r.height));
+//		consoleHelper.PrintMessage("window width = " + Integer.toString(r.width));
+//
+//		imageScaleX = (int) Math.floor(windowWidth * 1.0f / myBMImage.width);
+//		imageScaleY = (int) Math.floor(windowHeight * 1.0f / myBMImage.height);
+//
+//
+//		return MathHelper.SetNonZeroValue(imageScaleY < imageScaleX ? imageScaleY : imageScaleX);
+//	}
 
 
 //	//---------------------------------------------------------------------------
@@ -680,6 +694,11 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 		if (descriptor.equals("flip image")) {
 			if (o instanceof Boolean) {
 				flipImage((boolean) o);
+			}
+	    }
+		if (descriptor.equals("set min beads")) {
+			if (o instanceof Integer) {
+				setMinBeads((Integer) o);
 			}
 	    }
 	}

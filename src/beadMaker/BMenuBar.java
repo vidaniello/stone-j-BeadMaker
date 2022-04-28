@@ -433,6 +433,21 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		} catch (ArrayIndexOutOfBoundsException e) {
 			controlPanel.flipImageCheckboxPanel.checkbox.setSelected(false);
 		}
+		
+		// This is for backward compatibility for projects that did not have
+		// "displaySettings.minimumBeads" (see comment block above for possible regression issues)
+//		try {
+//			//beadMaker.minBeadsComboBox = xmlHelper.GetIntFromXml("displaySettings.minimumBeads", xmlHelper.projectXML);
+//			beadMaker.minBeadsComboBox.setSelectedIndex(xmlHelper.GetIntFromXml("displaySettings.minimumBeads", xmlHelper.projectXML));
+//		} catch (ArrayIndexOutOfBoundsException e) {
+//			beadMaker.minBeadsComboBox.setSelectedIndex(0);
+//		}
+		try {
+			//beadMaker.minBeadsComboBox = xmlHelper.GetIntFromXml("displaySettings.minimumBeads", xmlHelper.projectXML);
+			beadMaker.minBeadsComboBox.setSelectedItem(xmlHelper.GetDataFromXml("displaySettings.minimumBeads", xmlHelper.projectXML));
+		} catch (ArrayIndexOutOfBoundsException e) {
+			beadMaker.minBeadsComboBox.setSelectedIndex(0);
+		}
 
 		boolean perlerCheckBoxState = xmlHelper.GetIntFromXml("brandsToUse.perler", xmlHelper.projectXML) == 1 ? true : false;
 		boolean artkalCheckBoxState = xmlHelper.GetIntFromXml("brandsToUse.artkalS", xmlHelper.projectXML) == 1 ? true : false;
@@ -592,7 +607,7 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 			}
 		}
 
-		String[][] xmlData = new String[30][2];
+		String[][] xmlData = new String[31][2];
 
 		xmlData[0] = new String[] { "imageFile", imageFile };
 		xmlData[1] = new String[] { "dialValues.red", Integer.toString(controlPanel.sliderRed.getValue()) };
@@ -627,6 +642,8 @@ public class BMenuBar extends MenuBar implements InterObjectCommunicatorEventLis
 		xmlData[27] = new String[] { "displaySettings.gridColor.green",Integer.toString(imageController.renderLabel.gridColor.getGreen()) };
 		xmlData[28] = new String[] { "displaySettings.gridColor.blue",Integer.toString(imageController.renderLabel.gridColor.getBlue()) };
 		xmlData[29] = new String[] { "displaySettings.flipImage",Integer.toString(controlPanel.flipImageCheckboxPanel.checkbox.isSelected() ? 1 : 0) };
+		//xmlData[30] = new String[] { "displaySettings.minimumBeads",Integer.toString(beadMaker.minBeadsComboBox.getSelectedIndex()) };
+		xmlData[30] = new String[] { "displaySettings.minimumBeads",beadMaker.minBeadsComboBox.getSelectedItem().toString()};
 
 		xmlHelper.AlterXML(xmlData, myProjectName, useAppData, appDataFolderName);
 

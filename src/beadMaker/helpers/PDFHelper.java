@@ -135,7 +135,7 @@ public class PDFHelper {
 
 			// FULLRENDER_FULLCOLOR:
 			consoleHelper.PrintMessage("Running PDF render for FULLRENDER_FULLCOLOR");
-			consoleHelper.PrintMessage("Number of colors: " + pallette.currentPallette.length);
+			consoleHelper.PrintMessage("Number of colors: " + pallette.currentPalette.length);
 			consoleHelper.PrintMessage("Number of tiles: " + imageController.originalCleanedImage.GetTileCountForImage(imageController.originalCleanedImage, imageController.renderLabel));
 			consoleHelper.PrintMessage("Number of tiles: " + imageController.originalCleanedImage.GetTileCountForImage(imageController.originalCleanedImage, imageController.renderLabel));
 			
@@ -144,8 +144,8 @@ public class PDFHelper {
 				SavePatternPDF__pdfImage 	= new BMImage	[1]									[imageController.colorCorrectedBeadMappedImage.GetTileCountForImage(imageController.colorCorrectedBeadMappedImage, imageController.renderLabel)][2]; // n
 				SavePatternPDF__localImage 	= new BMImage	[1]									[imageController.colorCorrectedBeadMappedImage.GetTileCountForImage(imageController.colorCorrectedBeadMappedImage, imageController.renderLabel)];
 			} else {
-				SavePatternPDF__pdfImage 	= new BMImage	[pallette.currentPallette.length]	[imageController.colorCorrectedBeadMappedImage.GetTileCountForImage(imageController.colorCorrectedBeadMappedImage, imageController.renderLabel)][2]; // n
-				SavePatternPDF__localImage 	= new BMImage	[pallette.currentPallette.length]	[imageController.colorCorrectedBeadMappedImage.GetTileCountForImage(imageController.colorCorrectedBeadMappedImage, imageController.renderLabel)];
+				SavePatternPDF__pdfImage 	= new BMImage	[pallette.currentPalette.length]	[imageController.colorCorrectedBeadMappedImage.GetTileCountForImage(imageController.colorCorrectedBeadMappedImage, imageController.renderLabel)][2]; // n
+				SavePatternPDF__localImage 	= new BMImage	[pallette.currentPalette.length]	[imageController.colorCorrectedBeadMappedImage.GetTileCountForImage(imageController.colorCorrectedBeadMappedImage, imageController.renderLabel)];
 			}
 
 			//if "color printing" is selected, do this stuff
@@ -155,9 +155,9 @@ public class PDFHelper {
 			} else {
 				// need to iterate over currentPallette and fire once for every pallette
 				// index (array position 4)
-				for (int h = 0; h < pallette.currentPallette.length; h++) {
+				for (int h = 0; h < pallette.currentPalette.length; h++) {
 	
-					if (pallette.currentPallette[h][pallette.arrayIndex05_PixelCount] > 0 && pallette.currentPallette[h][pallette.arrayIndex16_IsChecked] == 1) {
+					if (pallette.currentPalette[h][pallette.arrayIndex05_PixelCount] > 0 && pallette.currentPalette[h][pallette.arrayIndex16_IsChecked] == 1) {
 						SavePatternPDF__localImage[h][0] = imageController.colorCorrectedBeadMappedImage.get();
 						//SavePatternPDF__localImage[h][0].save("F:\\My Documents\\Dropbox\\Workspace\\BeadMaker2018\\poop\\SavePatternPDF__localImage_" + h + ".png");			
 						SavePatternPDF__localImage[h] = BMImage.SplitImageIntoTiles(SavePatternPDF__localImage[h][0], imageController.renderLabel);
@@ -166,7 +166,7 @@ public class PDFHelper {
 							//tempLocalImage = SavePatternPDF__localImage[h][m].HighlightSelectedColor(pallette, h).get();
 							//SavePatternPDF__beadCount[h][m] = SavePatternPDF__localImage[h][m].totalBeadsHightlighted;
 							//BMImage.HighlightSelectedColor(SavePatternPDF__localImage[h][m], pallette, pallette.currentPallette[h][pallette.arrayIndex04_ColorIndex]).save("F:\\My Documents\\Dropbox\\Workspace\\BeadMaker2018\\poop\\SavePatternPDF__localImage_" + h + "_" + m + ".png");
-							SavePatternPDF__localImage[h][m] = SavePatternPDF__localImage[h][m].HighlightSelectedColor(SavePatternPDF__localImage[h][m], pallette, pallette.currentPallette[h][pallette.arrayIndex04_ColorIndex]);
+							SavePatternPDF__localImage[h][m] = SavePatternPDF__localImage[h][m].HighlightSelectedColor(SavePatternPDF__localImage[h][m], pallette, pallette.currentPalette[h][pallette.arrayIndex04_ColorIndex]);
 							//SavePatternPDF__localImage[h][m].save("F:\\My Documents\\Dropbox\\Workspace\\BeadMaker2018\\poop\\SavePatternPDF__localImage_" + h + "_" + m + ".png");
 							consoleHelper.PrintMessage("Bead count = " + SavePatternPDF__localImage[h][m].totalBeadsHightlighted);
 						}
@@ -195,9 +195,9 @@ public class PDFHelper {
 				pdfHeight = SavePatternPDF__pdfImage[0][0][0].height;
 
 			} else {
-				for (int h = 0; h < pallette.currentPallette.length; h++) {
+				for (int h = 0; h < pallette.currentPalette.length; h++) {
 					
-					if (pallette.currentPallette[h][pallette.arrayIndex05_PixelCount] > 0 && pallette.currentPallette[h][pallette.arrayIndex16_IsChecked] == 1) {
+					if (pallette.currentPalette[h][pallette.arrayIndex05_PixelCount] > 0 && pallette.currentPalette[h][pallette.arrayIndex16_IsChecked] == 1) {
 						
 						for (int i = 0; i < SavePatternPDF__localImage[h].length; i++) {
 	
@@ -221,7 +221,7 @@ public class PDFHelper {
 
 				//need to put this loop here to avoid a null pointer exception
 				// when the first pallette color is unchecked
-				for (int h = 0; h < pallette.currentPallette.length; h++) {
+				for (int h = 0; h < pallette.currentPalette.length; h++) {
 					if(SavePatternPDF__pdfImage[h][0][0] != null) {
 						pdfWidth = SavePatternPDF__pdfImage[h][0][0].width;
 						pdfHeight = SavePatternPDF__pdfImage[h][0][0].height;
@@ -318,7 +318,7 @@ public class PDFHelper {
 					// pallette iterator
 					for (int k = 0; k < SavePatternPDF__pdfImage.length; k++) {
 	
-						if (pallette.currentPallette[k][pallette.arrayIndex05_PixelCount] > 0 && pallette.currentPallette[k][pallette.arrayIndex16_IsChecked] == 1) {
+						if (pallette.currentPalette[k][pallette.arrayIndex05_PixelCount] > 0 && pallette.currentPalette[k][pallette.arrayIndex16_IsChecked] == 1) {
 	
 							if (SavePatternPDF__localImage[k][j].totalBeadsHightlighted > 0) {
 								//ConsoleHelper.PrintMessage("SavePatternPDF__beadCount[k][j] > 0");
@@ -344,9 +344,9 @@ public class PDFHelper {
 									"Tile "
 										+ Integer.toString(j + 1)
 										+ "\r\n"
-										+ pallette.perlerColorsNames[pallette.currentPallette[k][pallette.arrayIndex04_ColorIndex]][1]
+										+ pallette.perlerColorsNames[pallette.currentPalette[k][pallette.arrayIndex04_ColorIndex]][1]
 										+ " "
-										+ pallette.perlerColorsNames[pallette.currentPallette[k][pallette.arrayIndex04_ColorIndex]][0]
+										+ pallette.perlerColorsNames[pallette.currentPalette[k][pallette.arrayIndex04_ColorIndex]][0]
 										+ " (Beads: "
 										+ Integer.toString(SavePatternPDF__localImage[k][j].totalBeadsHightlighted)
 										+ ")",
@@ -369,9 +369,9 @@ public class PDFHelper {
 										"Tile "
 											+ Integer.toString(j + 1)
 											+ "\r\n"
-											+ pallette.perlerColorsNames[pallette.currentPallette[k][pallette.arrayIndex04_ColorIndex]][1]
+											+ pallette.perlerColorsNames[pallette.currentPalette[k][pallette.arrayIndex04_ColorIndex]][1]
 											+ " "
-											+ pallette.perlerColorsNames[pallette.currentPallette[k][pallette.arrayIndex04_ColorIndex]][0]
+											+ pallette.perlerColorsNames[pallette.currentPalette[k][pallette.arrayIndex04_ColorIndex]][0]
 											+ " (Beads: "
 											+ Integer.toString(SavePatternPDF__localImage[k][j].totalBeadsHightlighted)
 											+ ")",
@@ -393,7 +393,7 @@ public class PDFHelper {
 											pdfCanvas,
 											font,
 											//"Tile " + Integer.toString(j + 1) + "\r\n" + beadColorPrefix + perlerColorsNames[currentPallette[k][arrayIndex04_ColorIndex]][0] + " (Beads: " + Integer.toString(SavePatternPDF__beadCount[k][j]) + ")",
-											"Tile " + Integer.toString(j + 1) + "\r\n" + pallette.perlerColorsNames[pallette.currentPallette[k][pallette.arrayIndex04_ColorIndex]][1] + " " + pallette.perlerColorsNames[pallette.currentPallette[k][pallette.arrayIndex04_ColorIndex]][0] + " (Beads: " + Integer.toString(SavePatternPDF__localImage[k][j].totalBeadsHightlighted) + ")",
+											"Tile " + Integer.toString(j + 1) + "\r\n" + pallette.perlerColorsNames[pallette.currentPalette[k][pallette.arrayIndex04_ColorIndex]][1] + " " + pallette.perlerColorsNames[pallette.currentPalette[k][pallette.arrayIndex04_ColorIndex]][0] + " (Beads: " + Integer.toString(SavePatternPDF__localImage[k][j].totalBeadsHightlighted) + ")",
 											pdfHeight,
 											pdfWidth
 										);

@@ -82,6 +82,8 @@ public class BMImage extends PImage {
 	
 	boolean useAppData;
 	String appDataFolderName;
+	
+	int swapToPerlerColors_RecursionDepth = 0;
 
 	//------------------------------------------------------------
 	//CONSTRUCTOR
@@ -373,13 +375,13 @@ public class BMImage extends PImage {
 	// GetPerlerPalletteIndexForSinglePixel
 	//---------------------------------------------------------------------------
 	//DONE: THIS FUNCTION NEEDS TO CONSIDER DITHERING
-	int GetPerlerPalletteIndexForSinglePixel(Color myColor, Palette pallette) {
+	int GetPerlerPaletteIndexForSinglePixel(Color myColor, Palette palette) {
 		int pixelR;
 		int pixelG;
 		int pixelB;
 		int pixelAlpha;
 
-		int localPalletteIndex = -1;
+		int localPaletteIndex = -1;
 
 		int RGBDistance;
 		int BestRGBDistance;
@@ -399,12 +401,12 @@ public class BMImage extends PImage {
 			BestRGBDistance = 10000000;
 			perlerColorsArrayIndex = 0;
 
-			for (int j = 0; j < pallette.currentPallette.length; j++) {
+			for (int j = 0; j < palette.currentPalette.length; j++) {
 				RGBDistance = 
 						(int) (
-								Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex00_Red	] - pixelR) + 1, 2) + 
-								Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex01_Green	] - pixelG) + 1, 2) +
-								Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex02_Blue	] - pixelB) + 1, 2)
+								Math.pow(Math.abs(palette.currentPalette[j][palette.arrayIndex00_Red	] - pixelR) + 1, 2) + 
+								Math.pow(Math.abs(palette.currentPalette[j][palette.arrayIndex01_Green	] - pixelG) + 1, 2) +
+								Math.pow(Math.abs(palette.currentPalette[j][palette.arrayIndex02_Blue	] - pixelB) + 1, 2)
 								);
 
 				if (RGBDistance < BestRGBDistance) {
@@ -414,9 +416,9 @@ public class BMImage extends PImage {
 				}
 			}
 			//set the Color of the output color to the perler-mapped color
-			localPalletteIndex = perlerColorsArrayIndex;
+			localPaletteIndex = perlerColorsArrayIndex;
 		}
-		return localPalletteIndex;
+		return localPaletteIndex;
 	}
 
 
@@ -425,29 +427,36 @@ public class BMImage extends PImage {
 	// SwapToPerlerColors
 	//---------------------------------------------------------------------------
 	//synchronized public PImage SwapToPerlerColors(PImage image, int[][] pallette) {
-	public void SwapToPerlerColors(Palette pallette, float colorMatchingWeight_DitherLevel, float colorMatchingWeight_R, float colorMatchingWeight_G, float colorMatchingWeight_B, float colorMatchingWeight_Saturation, float colorMatchingWeight_Contrast, float colorMatchingWeight_Brightness, float colorMatchingWeight_Sharpness, BMImage lutImage) {
+	public void SwapToPerlerColors(Palette palette, float colorMatchingWeight_DitherLevel, float colorMatchingWeight_R, float colorMatchingWeight_G, float colorMatchingWeight_B, float colorMatchingWeight_Saturation, float colorMatchingWeight_Contrast, float colorMatchingWeight_Brightness, float colorMatchingWeight_Sharpness, BMImage lutImage, int minBeads, boolean isRecursiveCall) {
 		consoleHelper.PrintMessage("SwapToPerlerColors");
-
-		this.Sharpen(colorMatchingWeight_Sharpness);
-		this.ColorCorrect(
-			colorMatchingWeight_R,
-			colorMatchingWeight_G,
-			colorMatchingWeight_B,
-			colorMatchingWeight_Saturation,
-			colorMatchingWeight_Contrast,
-			colorMatchingWeight_Brightness,
-			lutImage
-		);
+		
+		if(isRecursiveCall) {
+			consoleHelper.PrintMessage("swapToPerlerColors_RecursionDepth = " + Integer.toString(++swapToPerlerColors_RecursionDepth));
+		}
+		else {		
+			swapToPerlerColors_RecursionDepth = 0;
+		
+			this.Sharpen(colorMatchingWeight_Sharpness);
+			this.ColorCorrect(
+				colorMatchingWeight_R,
+				colorMatchingWeight_G,
+				colorMatchingWeight_B,
+				colorMatchingWeight_Saturation,
+				colorMatchingWeight_Contrast,
+				colorMatchingWeight_Brightness,
+				lutImage
+			);
+		}
 
 		int
-		pixelR,
-		pixelG,
-		pixelB;
+			pixelR,
+			pixelG,
+			pixelB;
 
 		float
-		RedPerceptionCorrectionFactor,
-		GreenPerceptionCorrectionFactor,
-		BluePerceptionCorrectionFactor;
+			RedPerceptionCorrectionFactor,
+			GreenPerceptionCorrectionFactor,
+			BluePerceptionCorrectionFactor;
 
 		int rgbDistance;
 
@@ -459,16 +468,22 @@ public class BMImage extends PImage {
 		int[] bDitherError;
 
 		//clear out previous counts
-		for (int h = 0; h < pallette.currentPallette.length; h++) {
-			pallette.currentPallette[h][pallette.arrayIndex05_PixelCount] = 0;
+		for (int h = 0; h < palette.currentPalette.length; h++) {
+			palette.currentPalette[h][palette.arrayIndex05_PixelCount] = 0;
+			//palette.currentPalette[h][palette.arrayIndex18_SecondBestPixelCount] = 0;
+			if(!isRecursiveCall) {
+				palette.currentPalette[h][palette.arrayIndex19_FailedMinBeadCheck] = 0;
+			}
 		}
 
-		pallette.totalPalletteColors = 0;
-		pallette.totalBeadsUsed = 0;
+		palette.totalPalletteColors = 0;
+		palette.totalBeadsUsed = 0;
 
 		this.loadPixels();
 
 		if (!GlobalConstants.showOriginalImageInsteadOfPixelMappedImage) {
+			
+			//create arrays (r, g, b) to store dither error (1 for each pixel)
 			rDitherError = new int[this.height * this.width];
 			gDitherError = new int[this.height * this.width];
 			bDitherError = new int[this.height * this.width];
@@ -491,13 +506,13 @@ public class BMImage extends PImage {
 					rgbDistance = 10000000;
 					bestRGBDistance = 10000000;
 					perlerColorsArrayIndex = 0;
-	
-					for (int j = 0; j < pallette.currentPallette.length; j++) {
+					
+					for (int j = 0; j < palette.currentPalette.length; j++) {
 						//if the color's checkbox is checked, try to color map it
-						if(pallette.currentPallette[j][pallette.arrayIndex16_IsChecked] == 1) {
+						if(palette.currentPalette[j][palette.arrayIndex16_IsChecked] == 1 && palette.currentPalette[j][palette.arrayIndex19_FailedMinBeadCheck] == 0) {
 	
 							//Artkal
-							if(pallette.currentPallette[j][pallette.arrayIndex11_Brand] == pallette.brandIdArtkalS) {
+							if(palette.currentPalette[j][palette.arrayIndex11_Brand] == palette.brandIdArtkalS) {
 								RedPerceptionCorrectionFactor 	= Artkal_RedPerceptionCorrectionFactor;
 								GreenPerceptionCorrectionFactor = Artkal_GreenPerceptionCorrectionFactor;
 								BluePerceptionCorrectionFactor 	= Artkal_BluePerceptionCorrectionFactor;
@@ -510,12 +525,12 @@ public class BMImage extends PImage {
 	
 							rgbDistance =
 								(int)(
-									Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex13_MapRed		] - pixelR) * 100 / RedPerceptionCorrectionFactor  , 2) +
-									Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex14_MapGreen	] - pixelG) * 100 / GreenPerceptionCorrectionFactor, 2) +
-									Math.pow(Math.abs(pallette.currentPallette[j][pallette.arrayIndex15_MapBlue	] - pixelB) * 100 / BluePerceptionCorrectionFactor , 2)
+									Math.pow(Math.abs(palette.currentPalette[j][palette.arrayIndex13_MapRed		] - pixelR) * 100 / RedPerceptionCorrectionFactor  , 2) +
+									Math.pow(Math.abs(palette.currentPalette[j][palette.arrayIndex14_MapGreen	] - pixelG) * 100 / GreenPerceptionCorrectionFactor, 2) +
+									Math.pow(Math.abs(palette.currentPalette[j][palette.arrayIndex15_MapBlue		] - pixelB) * 100 / BluePerceptionCorrectionFactor , 2)
 								);
-							//If there is a better match for the pixel, do this
 							if (rgbDistance < bestRGBDistance) {
+								//set the best value to the current value
 								bestRGBDistance = rgbDistance;
 								//if we find a good match, set the colorPallette perlerColorsArrayIndex to the current perlerColor
 								perlerColorsArrayIndex = j;
@@ -528,6 +543,8 @@ public class BMImage extends PImage {
 					//----------------------------------------------------------------------------------
 					//All of the dithering algorithms come from here:
 					//http://www.tannerhelland.com/4660/dithering-eleven-algorithms-source-code/
+					// This process takes dither offsets from the current pixel and applies them to future pixels.
+					// It does *not* affect the coloring of the current pixel.
 					//----------------------------------------------------------------------------------
 					int myDitherMethod = ditherMethod.ordinal();
 					int ditherDivisor = ditherMatrix.ditherMatrix[myDitherMethod][0][DitherArrayIndex3_Denominator];
@@ -542,30 +559,30 @@ public class BMImage extends PImage {
 						//if the forward dither is in bounds of the image,
 						if (targetPixel < rDitherError.length) {
 							//add the error to the forward pixel, adjusted by the error weight and the dither slider (0-100)
-							rDitherError[targetPixel] += (pixelR - pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex13_MapRed	]) * colorMatchingWeight_DitherLevel * ditherMatrix.ditherMatrix[myDitherMethod][k][DitherArrayIndex2_Numerator] / ditherDivisor;
-							gDitherError[targetPixel] += (pixelG - pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex14_MapGreen	]) * colorMatchingWeight_DitherLevel * ditherMatrix.ditherMatrix[myDitherMethod][k][DitherArrayIndex2_Numerator] / ditherDivisor;
-							bDitherError[targetPixel] += (pixelB - pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex15_MapBlue	]) * colorMatchingWeight_DitherLevel * ditherMatrix.ditherMatrix[myDitherMethod][k][DitherArrayIndex2_Numerator] / ditherDivisor;
+							rDitherError[targetPixel] += (pixelR - palette.currentPalette[perlerColorsArrayIndex][palette.arrayIndex13_MapRed	]) * colorMatchingWeight_DitherLevel * ditherMatrix.ditherMatrix[myDitherMethod][k][DitherArrayIndex2_Numerator] / ditherDivisor;
+							gDitherError[targetPixel] += (pixelG - palette.currentPalette[perlerColorsArrayIndex][palette.arrayIndex14_MapGreen	]) * colorMatchingWeight_DitherLevel * ditherMatrix.ditherMatrix[myDitherMethod][k][DitherArrayIndex2_Numerator] / ditherDivisor;
+							bDitherError[targetPixel] += (pixelB - palette.currentPalette[perlerColorsArrayIndex][palette.arrayIndex15_MapBlue	]) * colorMatchingWeight_DitherLevel * ditherMatrix.ditherMatrix[myDitherMethod][k][DitherArrayIndex2_Numerator] / ditherDivisor;
 						}
 					}
 					//----------------------------------------------------------------------------------
 					//----------------------------------------------------------------------------------
 	
 					//increment the count of the matched perler color by 1
-					pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex05_PixelCount]++;
-					pallette.totalBeadsUsed++;
+					palette.currentPalette[perlerColorsArrayIndex][palette.arrayIndex05_PixelCount]++;
+					palette.totalBeadsUsed++;
 					//if this is the first time we've encountered this perler color, 
-					if (pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex05_PixelCount] == 1) {
+					if (palette.currentPalette[perlerColorsArrayIndex][palette.arrayIndex05_PixelCount] == 1) {
 						//add 1 to the total number of colors used.
-						pallette.totalPalletteColors++;
+						palette.totalPalletteColors++;
 					}
 					//set the pixel of the output image to the perler-mapped color
 					//added the 255 alpha in an attempt to squash the random pixel colorization bug
 	
 					//See Utilities.pixeltoColor for bit shifting background
 					this.pixels[i] = ColorHelper.rgbaToProcessingColor(
-						pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex00_Red],
-						pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex01_Green],
-						pallette.currentPallette[perlerColorsArrayIndex][pallette.arrayIndex02_Blue],
+						palette.currentPalette[perlerColorsArrayIndex][palette.arrayIndex00_Red],
+						palette.currentPalette[perlerColorsArrayIndex][palette.arrayIndex01_Green],
+						palette.currentPalette[perlerColorsArrayIndex][palette.arrayIndex02_Blue],
 						255
 					);
 				}
@@ -577,7 +594,73 @@ public class BMImage extends PImage {
 	//				pallette.totalPalletteColors++;
 	//			}
 	//		}
+			
+			
+			//----------------------------------------------------------------------------------
+			// Check for colors that do not meet min N and call SwapToPerlerColors recursively
+			//----------------------------------------------------------------------------------
+			int FailedMinBeadCheck_LowestPixelCount = 10000000;
+			int FailedMinBeadCheck_PerlerColorsArrayIndex = -1;
+			
+			//turn off all zero colors
+			if(!isRecursiveCall) {
+				for (int i = 0; i < palette.currentPalette.length; i++) {
+					if (
+						palette.currentPalette[i][palette.arrayIndex16_IsChecked] == 1 &&
+						palette.currentPalette[i][palette.arrayIndex05_PixelCount] == 0
+						
+					) {
+						palette.currentPalette[i][palette.arrayIndex19_FailedMinBeadCheck] = 1;
+					}
+				}
+			}
+			
+			//add all unchecked colors to the totalPalletteColors
+			for (int i = 0; i < palette.currentPalette.length; i++) {
+				if (
+					   palette.currentPalette[i][palette.arrayIndex16_IsChecked] == 1
+					&& palette.currentPalette[i][palette.arrayIndex19_FailedMinBeadCheck] == 0
+					//&& palette.currentPalette[i][palette.arrayIndex05_PixelCount] > 0
+				) {
+					int beadCheckCount =
+						palette.currentPalette[i][palette.arrayIndex05_PixelCount]; //+
+						//palette.currentPalette[i][palette.arrayIndex18_SecondBestPixelCount];
+					if(palette.currentPalette[i][palette.arrayIndex05_PixelCount] < minBeads) {
+						//if(beadCheckCount < FailedMinBeadCheck_LowestPixelCount) {
+							FailedMinBeadCheck_LowestPixelCount = beadCheckCount;
+							FailedMinBeadCheck_PerlerColorsArrayIndex = i;
+							break; //exit for loop if we've identified a color below minBeads
+						//}
+					}
+				}
+			}
+				
+			//if one or more colors failed the min N check, do this
+			if(FailedMinBeadCheck_PerlerColorsArrayIndex > -1) {
+				consoleHelper.PrintMessage("FailedMinBeadCheckColors = (index:)" + Integer.toString(FailedMinBeadCheck_PerlerColorsArrayIndex) + " " + palette.perlerColorsNames[FailedMinBeadCheck_PerlerColorsArrayIndex][1] + " " + palette.perlerColorsNames[FailedMinBeadCheck_PerlerColorsArrayIndex][0]);
+				palette.currentPalette[FailedMinBeadCheck_PerlerColorsArrayIndex][palette.arrayIndex19_FailedMinBeadCheck] = 1;
+				SwapToPerlerColors(
+					palette,
+					colorMatchingWeight_DitherLevel,
+					colorMatchingWeight_R,
+					colorMatchingWeight_G,
+					colorMatchingWeight_B,
+					colorMatchingWeight_Saturation,
+					colorMatchingWeight_Contrast,
+					colorMatchingWeight_Brightness,
+					colorMatchingWeight_Sharpness,
+					lutImage,
+					minBeads,
+					true
+				);
+				//skip the updatePixels() step
+				return;
+			}
+			
+			
 		}
+		
+		
 
 		this.updatePixels();
 	}
@@ -592,10 +675,10 @@ public class BMImage extends PImage {
 		BMImage image = bmImage.get();
 		int colorIndex = 0;
 		
-		for (int i = 0; i < pallette.currentPallette.length; i++) {
-			if (pallette.currentPallette[i][pallette.arrayIndex04_ColorIndex] == myPalletteIndex) {
+		for (int i = 0; i < pallette.currentPalette.length; i++) {
+			if (pallette.currentPalette[i][pallette.arrayIndex04_ColorIndex] == myPalletteIndex) {
 				colorIndex = i;
-				consoleHelper.PrintMessage("HighlightSelectedColor - color chosen: " + pallette.perlerColorsNames[pallette.currentPallette[i][pallette.arrayIndex04_ColorIndex]][1] + " " + pallette.perlerColorsNames[pallette.currentPallette[i][pallette.arrayIndex04_ColorIndex]][0]);
+				consoleHelper.PrintMessage("HighlightSelectedColor - color chosen: " + pallette.perlerColorsNames[pallette.currentPalette[i][pallette.arrayIndex04_ColorIndex]][1] + " " + pallette.perlerColorsNames[pallette.currentPalette[i][pallette.arrayIndex04_ColorIndex]][0]);
 			}
 		}
 
@@ -617,9 +700,9 @@ public class BMImage extends PImage {
 			if (myPixelColor.getAlpha() == 255) {
 
 				if (
-					myPixelColor.getRed() 	== pallette.currentPallette[colorIndex][pallette.arrayIndex00_Red	] &&
-					myPixelColor.getGreen() == pallette.currentPallette[colorIndex][pallette.arrayIndex01_Green	] &&
-					myPixelColor.getBlue() 	== pallette.currentPallette[colorIndex][pallette.arrayIndex02_Blue	]
+					myPixelColor.getRed() 	== pallette.currentPalette[colorIndex][pallette.arrayIndex00_Red	] &&
+					myPixelColor.getGreen() == pallette.currentPalette[colorIndex][pallette.arrayIndex01_Green	] &&
+					myPixelColor.getBlue() 	== pallette.currentPalette[colorIndex][pallette.arrayIndex02_Blue	]
 				) {
 					//ConsoleHelper.PrintMessage("incrementing totalBeadsHightlighted");
 					image.totalBeadsHightlighted++;
@@ -828,7 +911,7 @@ public class BMImage extends PImage {
 
 		//color myPixel;
 		Color myPixel;
-		int myRed, myGreen, myBlue, myAlpha;
+		int myAlpha;
 
 		this.loadPixels();
 

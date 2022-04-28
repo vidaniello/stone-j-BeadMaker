@@ -11,7 +11,10 @@ import core.event.InterObjectCommunicatorEventListener;
 import core.logging.ConsoleHelper;
 import core.swingComponent.BorderMaker;
 
-public class HideControlsButton extends JButton implements InterObjectCommunicatorEventListener {
+//had to comment this out to get it to compile 2021-12-12
+//for some reason using the interface InterObjectCommunicatorEventListener breaks the code
+//public class HideControlsButton extends JButton implements InterObjectCommunicatorEventListener {
+public class HideControlsButton extends JButton {
 
 	//For InterObjectCommunicator identification
 	private String objectName = "HIDE_CONTROLS_BUTTON";
@@ -26,7 +29,8 @@ public class HideControlsButton extends JButton implements InterObjectCommunicat
 		
 		this.controlPanelSuperPanel = myControlPanelSuperPanel;
 		oComm = myOComm;
-		oComm.setInterObjectCommunicatorEventListener(this);
+		//had to comment this out to get it to compile 2021-12-12
+		//oComm.setInterObjectCommunicatorEventListener(this);
 		
 		this.setBorder(new BorderMaker(BorderMaker.RAISEDBEVEL, 0, 1));
 		this.setPreferredSize(new Dimension(18,4000));
@@ -51,39 +55,41 @@ public class HideControlsButton extends JButton implements InterObjectCommunicat
 		controlPanelSuperPanel.toggleHide();
 	}
 
-	@Override
-	public void onInterObjectCommunicator_CommunicateEvent(Object o) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onInterObjectCommunicator_CommunicateEvent(String descriptor, Object o) {
-		if (descriptor.equals("toggle controls")) {
-			if (o instanceof KeyEvent) {
-				KeyEvent e = ((KeyEvent) o);
-				if (e.getKeyCode() == KeyEvent.VK_Q) {
-					Toggle();
-		        }			
-			}	
-		}
-		
-	}
-
-	@Override
-	public Object onInterObjectCommunicator_RequestEvent(Object o) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object onInterObjectCommunicator_RequestEvent(String descriptor, Object o) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getObjectName() {
-		return objectName;
-	}
+//had to comment this out to get it to compile 2021-12-12
+//for some reason using the interface InterObjectCommunicatorEventListener breaks the code
+//	@Override
+//	public void onInterObjectCommunicator_CommunicateEvent(Object o) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void onInterObjectCommunicator_CommunicateEvent(String descriptor, Object o) {
+//		if (descriptor.equals("toggle controls")) {
+//			if (o instanceof KeyEvent) {
+//				KeyEvent e = ((KeyEvent) o);
+//				if (e.getKeyCode() == KeyEvent.VK_Q) {
+//					Toggle();
+//		        }			
+//			}	
+//		}
+//		
+//	}
+//
+//	@Override
+//	public Object onInterObjectCommunicator_RequestEvent(Object o) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public Object onInterObjectCommunicator_RequestEvent(String descriptor, Object o) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public String getObjectName() {
+//		return objectName;
+//	}
 }
