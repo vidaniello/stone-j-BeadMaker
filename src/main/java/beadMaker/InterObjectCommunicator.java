@@ -37,7 +37,11 @@ public class InterObjectCommunicator {
 	}
 	
 	public void communicate(String descriptor, Object o, String subscriberName) {
-		if (oCommListener != null) oCommListener[Subscriber.valueOf(subscriberName).ordinal()].onInterObjectCommunicator_CommunicateEvent(descriptor, o);
+		try {
+			if (oCommListener != null) oCommListener[Subscriber.valueOf(subscriberName).ordinal()].onInterObjectCommunicator_CommunicateEvent(descriptor, o);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public Object request(Object o, String subscriberName) {	
