@@ -136,7 +136,14 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 		CUSTOM_41x49,
 		CUSTOM_40x48,
 		LEGO_8x8,
-		PERLERMINI_FORPDFPRINTING;
+		
+		/**
+		 * https://www.beadpark.com/p-1310880-pegboards-for-3x2-5mm-mini-fuse-beads-clear-140x140x7-5mm.html
+		 * https://artkalfusebeads.com/products/artkal-clear-large-square-pegboard-for-mini-2-6mm-beads-bcp01?variant=7887701999646
+		 */
+		CUSTOM_50x50_2_5mm,
+		
+		PERLERMINI_FORPDFPRINTING		
 	}
 	public PegboardMode pegboardMode;
 
@@ -314,6 +321,10 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 		case PERLERMINI_FORPDFPRINTING:
 			renderLabel.pegboardPegsWide = 56;
 			renderLabel.pegboardPegsHigh = 84;
+			break;
+		case CUSTOM_50x50_2_5mm:
+			renderLabel.pegboardPegsWide = 50;
+			renderLabel.pegboardPegsHigh = 50;
 			break;
 		}
 		pegboardMode = myPegboardMode;
@@ -519,6 +530,7 @@ public class ImageController implements InterObjectCommunicatorEventListener {
 			case CUSTOM_40x48:
 			case CUSTOM_41x49:
 			case LEGO_8x8:
+			case CUSTOM_50x50_2_5mm:
 				//localImage[0] = resizeImage(localImage[0], localImage[0].upscalerForPDFPrinting);
 				pixelsContainer = imageHelper.resizeImage(localImage[0], BMImage.upscalerForPDFPrinting);
 				localImage[0].setPixels(pixelsContainer.pixels, pixelsContainer.width, pixelsContainer.height);

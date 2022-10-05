@@ -387,7 +387,9 @@ public class ControlPanel extends JPanel implements InterObjectCommunicatorEvent
 				"Custom - 40w x 40h",
 				"Custom - 41w x 49h",
 				"Custom - 40w x 48h",
-				"Lego Tile 8x8"
+				"Lego Tile 8x8",
+				"50w x 50w 2.5mm Mini Fuse Beads (140x140x7.5mm)",
+				//"PERLERMINI_FORPDFPRINTING",
 		};		
 		
 
