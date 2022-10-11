@@ -67,6 +67,10 @@ public class Palette implements InterObjectCommunicatorEventListener {
 	public final String brandNameHama		= "Hama";
 	//public final String brandNameNabbi	= "Nabbi";
 	public final String brandNameArtkalS	= "Artkal-S";
+	
+	//size 2.6mm
+	public final String brandNamePerlerMini		= "Perler-mini";
+	public final String brandNameArtkalC	= "Artkal-C";
 
 	public final int arrayIndex00_Red 					=  0;
 	public final int arrayIndex01_Green 				=  1;
@@ -93,7 +97,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 
 	public final int brandIdPerler	= 1;
 	public final int brandIdHama	= 2;
-	public final int brandIdArtkalS	= 3;
+	public final int brandIdArtkal	= 3;
 
 //	public static enum PalletteMode {
 //		ALLCOLORS,
@@ -281,7 +285,13 @@ public class Palette implements InterObjectCommunicatorEventListener {
 				perlerColorsRGB[i][arrayIndex11_Brand] = brandIdHama;
 				break;
 			case brandNameArtkalS:
-				perlerColorsRGB[i][arrayIndex11_Brand] = brandIdArtkalS;
+				perlerColorsRGB[i][arrayIndex11_Brand] = brandIdArtkal;
+				break;
+			case brandNamePerlerMini:
+				perlerColorsRGB[i][arrayIndex11_Brand] = brandIdPerler;
+				break;
+			case brandNameArtkalC:
+				perlerColorsRGB[i][arrayIndex11_Brand] = brandIdArtkal;
 				break;
 			default:
 				consoleHelper.PrintMessage("WE HAVE HIT THE DEFAULT CASE-- THIS SHOULD NEVER HAPPEN");
@@ -353,7 +363,7 @@ public class Palette implements InterObjectCommunicatorEventListener {
 		//Artkal-S Brand
 		if (useArtkalS == GlobalConstants.off) {
 			for (int i = 0; i < perlerColorsRGB.length; i++) {
-				if (perlerColorsRGB[i][arrayIndex11_Brand		] == brandIdArtkalS) {
+				if (perlerColorsRGB[i][arrayIndex11_Brand		] == brandIdArtkal) {
 					perlerColorsRGB[i][arrayIndex10_Disabled	] = 0;
 				}
 			}
