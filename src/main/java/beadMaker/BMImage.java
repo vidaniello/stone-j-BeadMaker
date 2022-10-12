@@ -512,7 +512,7 @@ public class BMImage extends PImage {
 						if(palette.currentPalette[j][palette.arrayIndex16_IsChecked] == 1 && palette.currentPalette[j][palette.arrayIndex19_FailedMinBeadCheck] == 0) {
 	
 							//Artkal
-							if(palette.currentPalette[j][palette.arrayIndex11_Brand] == palette.brandIdArtkalS) {
+							if(palette.currentPalette[j][palette.arrayIndex11_Brand] == palette.brandIdArtkal) {
 								RedPerceptionCorrectionFactor 	= Artkal_RedPerceptionCorrectionFactor;
 								GreenPerceptionCorrectionFactor = Artkal_GreenPerceptionCorrectionFactor;
 								BluePerceptionCorrectionFactor 	= Artkal_BluePerceptionCorrectionFactor;
